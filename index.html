@@ -64,20 +64,42 @@
       }
     }
 
-    function openMap(type) {
-      const mapDiv = document.getElementById('map');
-      mapDiv.style.display = 'block';
-      map.setCenter(origenLatLng || { lat: 25.4208, lng: -101.0044 });
-      map.addListener('click', e => {
-        if (type === 'origen') {
-          origenLatLng = e.latLng.toJSON();
-          updateMarker('origen', origenLatLng);
-        } else {
-          destinoLatLng = e.latLng.toJSON();
-          updateMarker('destino', destinoLatLng);
-        }
-      });
+function openMap(type) {
+  const mapDiv = document.getElementById('map');
+  mapDiv.style.display = 'block';
+  map.setCenter(origenLatLng || { lat: 25.4208, lng: -101.0044 });
+  map.addListener('click', e => {
+    const latLng = e.latLng.toJSON();
+    if (type === 'origen') {
+      origenLatLng = latLng;
+      updateMarker('origen', latLng);
+      // Obtener dirección desde coordenadas
+      reverseGeocode(latLng, 'origen');
+    } else {
+      destinoLatLng = latLng;
+      updateMarker('destino', latLng);
+      reverseGeocode(latLng, 'destino');
     }
+  });
+}
+
+async function reverseGeocode(latLng, type) {
+  const geocoder = new google.maps.Geocoder();
+  const result = await geocoder.geocode({ location: latLng });
+  const address = result.results.formatted_address;
+  const parts = address.split(', ');
+  const calle = parts;
+  const colonia = parts || '';
+  const ciudadEstado = parts[parts.length - 1];
+
+  if (type === 'origen') {
+    document.getElementById('origenCalle').value = calle;
+    document.getElementById('origenColonia').value = colonia;
+  } else {
+    document.getElementById('destinoCalle').value = calle;
+    document.getElementById('destinoColonia').value = colonia;
+  }
+}
 
     function updateMarker(type, latLng) {
       if (type === 'origen') {
@@ -99,44 +121,28 @@
       }
     }
 
-async function cotizar() {
-  if (!origenLatLng || !destinoLatLng) {
-    alert('¡Debes seleccionar origen y destino!');
-    return;
-  }
+    async function cotizar() {
+      if (!origenLatLng || !destinoLatLng) {
+        alert('¡Debes seleccionar origen y destino!');
+        return;
+      }
 
-  const service = new google.maps.DistanceMatrixService();
-  service.getDistanceMatrix({
-    origins: [origenLatLng],
-    destinations: [destinoLatLng],
-    travelMode: 'DRIVING'
-  }, async (response, status) => {
-    if (status !== 'OK') {
-      console.error('Error:', status, response);
-      alert('Error al calcular distancia: ' + status);
-      return;
+      const service = new google.maps.DistanceMatrixService();
+      service.getDistanceMatrix({
+        origins: [origenLatLng],
+        destinations: [destinoLatLng],
+        travelMode: 'DRIVING'
+      }, async (response, status) => {
+        if (status !== 'OK') {
+          alert('Error al calcular distancia');
+          return;
+        }
+
+        const distanceKm = response.rows.elements.distance.value / 1000; // en km
+        const precio = await calcularPrecio(distanceKm);
+        document.getElementById('resultado').innerText = `Precio: $${precio.toFixed(2)}`;
+      });
     }
-
-    // Validar que la respuesta tenga datos
-    if (!response.rows || !response.rows || !response.rows.elements) {
-      alert('No se pudo calcular la distancia');
-      return;
-    }
-
-    const element = response.rows.elements;
-    
-    // Validar que el elemento tenga distancia
-    if (element.status !== 'OK' || !element.distance) {
-      alert('No se pudo calcular la distancia entre esos puntos');
-      console.error('Element status:', element.status);
-      return;
-    }
-
-    const distanceKm = element.distance.value / 1000; // en km
-    const precio = await calcularPrecio(distanceKm);
-    document.getElementById('resultado').innerHTML = `<h3>Precio: $${precio.toFixed(2)}</h3><p>Distancia: ${distanceKm.toFixed(2)} km</p>`;
-  });
-}
 
     async function calcularPrecio(km) {
       const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-0_VsgcgGxVF2H4xvyycPW1FJYfhFzJZKqX3YWQurUe-J3U2u9AQ79YiAW4LvGozu3xvbgalFLJF-/pub?gid=154545784&single=true&output=csvhttps://docs.google.com/spreadsheets/d/e/2PACX-1vQ-0_VsgcgGxVF2H4xvyycPW1FJYfhFzJZKqX3YWQurUe-J3U2u9AQ79YiAW4LvGozu3xvbgalFLJF-/pub?gid=154545784&single=true&output=csv';
