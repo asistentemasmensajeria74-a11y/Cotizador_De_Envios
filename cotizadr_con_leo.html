@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cotizador de Envíos</title>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJxSSty38BQj38fgXfrrMbdOlme3AJN6I&callback=initMap" async defer></script>
+  <style>
+    #map { height: 300px; margin: 10px 0; }
+    .form-group { margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h2>Cotizador de Envíos</h2>
+
+  <!-- Origen -->
+  <h3>Origen (Saltillo, Coahuila)</h3>
+  <div class="form-group">
+    <input type="text" id="origenCalle" placeholder="Calle y número">
+    <input type="text" id="origenColonia" placeholder="Colonia">
+    <button onclick="selectOriginLocation()">Usar mi ubicación</button>
+    <button onclick="openMap('origen')">Seleccionar en mapa</button>
+  </div>
+
+  <!-- Destino -->
+  <h3>Destino</h3>
+  <div class="form-group">
+    <input type="text" id="destinoCalle" placeholder="Calle y número">
+    <input type="text" id="destinoColonia" placeholder="Colonia">
+    <button onclick="selectDestinationLocation()">Usar mi ubicación</button>
+    <button onclick="openMap('destino')">Seleccionar en mapa</button>
+  </div>
+
+  <!-- Botón cotizar -->
+  <button onclick="cotizar()">COTIZAR</button>
+  <div id="resultado"></div>
+
+  <div id="map"></div>
+
+  <script>
+    let map, origenMarker, destinoMarker;
+    let origenLatLng = null, destinoLatLng = null;
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 10,
+        center: { lat: 25.4208, lng: -101.0044 } // Saltillo
+      });
+    }
+
+    function selectOriginLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          origenLatLng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          updateMarker('origen', origenLatLng);
+        });
+      }
+    }
+
+    function selectDestinationLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          destinoLatLng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          updateMarker('destino', destinoLatLng);
+        });
+      }
+    }
+
+    function openMap(type) {
+      const mapDiv = document.getElementById('map');
+      mapDiv.style.display = 'block';
+      map.setCenter(origenLatLng || { lat: 25.4208, lng: -101.0044 });
+      map.addListener('click', e => {
+        if (type === 'origen') {
+          origenLatLng = e.latLng.toJSON();
+          updateMarker('origen', origenLatLng);
+        } else {
+          destinoLatLng = e.latLng.toJSON();
+          updateMarker('destino', destinoLatLng);
+        }
+      });
+    }
+
+    function updateMarker(type, latLng) {
+      if (type === 'origen') {
+        if (origenMarker) origenMarker.setMap(null);
+        origenMarker = new google.maps.Marker({
+          position: latLng,
+          map: map,
+          title: 'Origen',
+          icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+        });
+      } else {
+        if (destinoMarker) destinoMarker.setMap(null);
+        destinoMarker = new google.maps.Marker({
+          position: latLng,
+          map: map,
+          title: 'Destino',
+          icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+        });
+      }
+    }
+
+    async function cotizar() {
+      if (!origenLatLng || !destinoLatLng) {
+        alert('¡Debes seleccionar origen y destino!');
+        return;
+      }
+
+      const service = new google.maps.DistanceMatrixService();
+      service.getDistanceMatrix({
+        origins: [origenLatLng],
+        destinations: [destinoLatLng],
+        travelMode: 'DRIVING'
+      }, async (response, status) => {
+        if (status !== 'OK') {
+          alert('Error al calcular distancia');
+          return;
+        }
+
+        const distanceKm = response.rows.elements.distance.value / 1000; // en km
+        const precio = await calcularPrecio(distanceKm);
+        document.getElementById('resultado').innerText = `Precio: $${precio.toFixed(2)}`;
+      });
+    }
+
+    async function calcularPrecio(km) {
+      const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-0_VsgcgGxVF2H4xvyycPW1FJYfhFzJZKqX3YWQurUe-J3U2u9AQ79YiAW4LvGozu3xvbgalFLJF-/pub?gid=154545784&single=true&output=csvhttps://docs.google.com/spreadsheets/d/e/2PACX-1vQ-0_VsgcgGxVF2H4xvyycPW1FJYfhFzJZKqX3YWQurUe-J3U2u9AQ79YiAW4LvGozu3xvbgalFLJF-/pub?gid=154545784&single=true&output=csv';
+      const response = await fetch(sheetUrl);
+      const text = await response.text();
+      const rows = text.split('\n').map(r => r.split(','));
+      const data = rows; // primera fila de datos
+
+      const partida = parseFloat(data);
+      const costoKm = parseFloat(data);
+      const servicioRapido = parseFloat(data) / 100; // porcentaje a decimal
+
+      let total = partida + (km * costoKm);
+      // Por ahora, asumimos servicio normal (sin recargo). Luego puedes agregar checkbox para "servicio rápido"
+      return total;
+    }
+  </script>
+</body>
+</html>
