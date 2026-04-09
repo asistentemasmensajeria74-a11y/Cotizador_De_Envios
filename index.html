@@ -246,30 +246,32 @@ async function cotizar() {
       return;
     }
 
-    // 6. Verificar que haya rutas
-    if (!result.routes || result.routes.length === 0) {
-      console.error('No hay rutas disponibles');
-      alert('No se pudo calcular la distancia. No hay rutas.');
-      return;
-    }
+// 6. Verificar que haya rutas
+if (!result.routes || result.routes.length === 0) {
+  console.error('No hay rutas disponibles');
+  alert('No se pudo calcular la distancia. No hay rutas.');
+  return;
+}
 
-    // 7. Tomar la primera ruta
-    const ruta = result.routes;
-    console.log('Ruta:', ruta);
+// 7. Tomar la primera ruta
+const ruta = result.routes;
+console.log('=== RUTA ===');
+console.log('Ruta:', ruta);
+console.log('Propiedades de ruta:', Object.keys(ruta));
+console.log('Ruta.legs:', ruta.legs);
+console.log('Contenido completo de ruta:', JSON.stringify(ruta, null, 2));
+console.log('=== FIN RUTA ===');
 
-    // 8. Si ruta es un array, tomar el primer elemento
-    let rutaObj = ruta;
-    if (Array.isArray(ruta)) {
-      rutaObj = ruta;
-      console.log('Ruta objeto:', rutaObj);
-    }
+// 8. Verificar que haya tramos (legs)
+if (!ruta.legs || ruta.legs.length === 0) {
+  console.error('No hay tramos en la ruta');
+  alert('No se pudo calcular la distancia. No hay tramos.');
+  return;
+}
 
-    // 9. Verificar que haya tramos (legs)
-    if (!rutaObj.legs || rutaObj.legs.length === 0) {
-      console.error('No hay tramos en la ruta');
-      alert('No se pudo calcular la distancia. No hay tramos.');
-      return;
-    }
+// 9. Tomar el primer tramo
+const tramo = ruta.legs;
+console.log('Tramo:', tramo);
 
     // 10. Tomar el primer tramo
     const tramo = rutaObj.legs;
