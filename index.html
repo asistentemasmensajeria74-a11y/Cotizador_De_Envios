@@ -86,26 +86,49 @@ function openMap(type) {
   });
 }
 
-function obtenerDireccion(latLng, type) {
+// Función para obtener la dirección desde coordenadas
+function obtenerDireccion(latLng, tipo) {
+  // 1. Crear el geocoder de Google Maps
   const geocoder = new google.maps.Geocoder();
-  geocoder.geocode({ location: latLng }, (results, status) => {
-    if (status !== 'OK' || !results || results.length === 0) {
-      console.error('Geocoding failed:', status);
-      alert('No se pudo obtener la dirección. Verifica que la API de Geocoding esté habilitada.');
+
+  // 2. Hacer la petición de geocodificación
+  geocoder.geocode({ location: latLng }, function(results, status) {
+    // 3. Verificar si la petición fue exitosa
+    if (status !== 'OK') {
+      console.error('Error en Geocoding:', status);
+      alert('No se pudo obtener la dirección. Verifica tu conexión o la API.');
       return;
     }
 
-    const address = results.formatted_address;
-    const parts = address.split(', ');
-    const calle = parts || '';
-    const colonia = parts || '';
+    // 4. Verificar que haya resultados
+    if (!results || results.length === 0) {
+      console.error('No se encontraron resultados para estas coordenadas');
+      alert('No se encontró dirección para este punto. Intenta otro lugar.');
+      return;
+    }
 
-    if (type === 'origen') {
+    // 5. Tomar la primera dirección (la más precisa)
+    const direccionCompleta = results.formatted_address;
+    console.log('Dirección obtenida:', direccionCompleta);
+
+    // 6. Dividir la dirección en partes (calle, colonia, etc.)
+    const partes = direccionCompleta.split(', ');
+
+    // 7. Asignar la calle (primera parte)
+    const calle = partes || 'Calle no disponible';
+
+    // 8. Asignar la colonia (segunda parte, si existe)
+    const colonia = partes || 'Colonia no disponible';
+
+    // 9. Asignar los valores a los inputs según el tipo (origen o destino)
+    if (tipo === 'origen') {
       document.getElementById('origenCalle').value = calle;
       document.getElementById('origenColonia').value = colonia;
-    } else {
+    } else if (tipo === 'destino') {
       document.getElementById('destinoCalle').value = calle;
       document.getElementById('destinoColonia').value = colonia;
+    } else {
+      console.error('Tipo desconocido:', tipo);
     }
   });
 }
