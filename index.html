@@ -86,41 +86,72 @@ function openMap(type) {
   });
 }
 
-// Función para obtener la dirección desde coordenadas
 function obtenerDireccion(latLng, tipo) {
-  // 1. Crear el geocoder de Google Maps
+  // 1. Crear el geocoder
   const geocoder = new google.maps.Geocoder();
 
-  // 2. Hacer la petición de geocodificación
+  // 2. Hacer la petición
   geocoder.geocode({ location: latLng }, function(results, status) {
     // 3. Verificar si la petición fue exitosa
     if (status !== 'OK') {
-      console.error('Error en Geocoding:', status);
-      alert('No se pudo obtener la dirección. Verifica tu conexión o la API.');
+      console.error('Geocoding falló con status:', status);
+      alert('No se pudo obtener la dirección. Status: ' + status);
       return;
     }
 
     // 4. Verificar que haya resultados
     if (!results || results.length === 0) {
-      console.error('No se encontraron resultados para estas coordenadas');
+      console.error('No se encontraron resultados');
       alert('No se encontró dirección para este punto. Intenta otro lugar.');
       return;
     }
 
-    // 5. Tomar la primera dirección (la más precisa)
-    const direccionCompleta = results.formatted_address;
-    console.log('Dirección obtenida:', direccionCompleta);
+    // 5. Tomar el primer resultado
+    const primerResultado = results;
 
-    // 6. Dividir la dirección en partes (calle, colonia, etc.)
-    const partes = direccionCompleta.split(', ');
+    // 6. Inicializar variables para calle y colonia
+    let calle = 'Calle no disponible';
+    let colonia = 'Colonia no disponible';
 
-    // 7. Asignar la calle (primera parte)
-    const calle = partes || 'Calle no disponible';
+    // 7. Intentar usar formatted_address (opción principal)
+    if (primerResultado.formatted_address) {
+      console.log('Usando formatted_address:', primerResultado.formatted_address);
+      const partes = primerResultado.formatted_address.split(', ');
+      calle = partes || 'Calle no disponible';
+      colonia = partes || 'Colonia no disponible';
+    }
+    // 8. Si no hay formatted_address, usar address_components (fallback)
+    else if (primerResultado.address_components) {
+      console.log('Usando address_components como fallback');
 
-    // 8. Asignar la colonia (segunda parte, si existe)
-    const colonia = partes || 'Colonia no disponible';
+      // Recorrer los componentes para encontrar calle y colonia
+      for (let i = 0; i < primerResultado.address_components.length; i++) {
+        const componente = primerResultado.address_components[i];
 
-    // 9. Asignar los valores a los inputs según el tipo (origen o destino)
+        // Buscar tipo "street_number" o "route" para la calle
+        if (componente.types.includes('street_number') || componente.types.includes('route')) {
+          calle = componente.long_name;
+        }
+
+        // Buscar tipo "sublocality" o "neighborhood" para la colonia
+        if (componente.types.includes('sublocality') || componente.types.includes('neighborhood')) {
+          colonia = componente.long_name;
+        }
+      }
+
+      // Si no encontramos calle o colonia, usar el primer componente como calle
+      if (calle === 'Calle no disponible' && primerResultado.address_components.length > 0) {
+        calle = primerResultado.address_components.long_name;
+      }
+    }
+    // 9. Si nada funciona, usar coordenadas como fallback final
+    else {
+      console.error('No se pudo obtener dirección ni con formatted_address ni con address_components');
+      calle = `Lat: ${latLng.lat.toFixed(4)}`;
+      colonia = `Lng: ${latLng.lng.toFixed(4)}`;
+    }
+
+    // 10. Asignar a los inputs según el tipo
     if (tipo === 'origen') {
       document.getElementById('origenCalle').value = calle;
       document.getElementById('origenColonia').value = colonia;
