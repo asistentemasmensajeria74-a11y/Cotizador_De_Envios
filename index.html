@@ -218,61 +218,77 @@ function updateMarker(type, latLng) {
 }
 
 async function cotizar() {
+  // 1. Verificar que haya origen y destino
   if (!origenLatLng || !destinoLatLng) {
     alert('¡Debes seleccionar origen y destino!');
     return;
   }
 
-  console.log('Origen:', origenLatLng);
-  console.log('Destino:', destinoLatLng);
-
-  // Validar que no sean el mismo punto
+  // 2. Verificar que no sean el mismo punto
   if (origenLatLng.lat === destinoLatLng.lat && origenLatLng.lng === destinoLatLng.lng) {
     alert('¡El origen y destino no pueden ser el mismo punto!');
     return;
   }
 
+  // 3. Crear el servicio de Distance Matrix
   const service = new google.maps.DistanceMatrixService();
-  service.getDistanceMatrix({
-    origins: [origenLatLng],
-    destinations: [destinoLatLng],
-    travelMode: 'DRIVING'
-  }, async (response, status) => {
-    console.log('Distance Matrix status:', status);
-    console.log('Distance Matrix response:', response);
 
+  // 4. Hacer la petición
+  service.getDistanceMatrix({
+    origins: [new google.maps.LatLng(origenLatLng.lat, origenLatLng.lng)],
+    destinations: [new google.maps.LatLng(destinoLatLng.lat, destinoLatLng.lng)],
+    travelMode: 'DRIVING',
+    unitSystem: google.maps.UnitSystem.METRIC
+  }, async (response, status) => {
+    // 5. Verificar si la petición fue exitosa
     if (status !== 'OK') {
+      console.error('Distance Matrix falló con status:', status);
       alert('Error al calcular distancia: ' + status);
       return;
     }
 
+    // 6. Verificar que haya filas en la respuesta
     if (!response || !response.rows || response.rows.length === 0) {
-      alert('Respuesta vacía de Distance Matrix');
+      console.error('Respuesta vacía de Distance Matrix');
+      alert('No se pudo obtener la distancia. Respuesta vacía.');
       return;
     }
 
-    const element = response.rows.elements;
-    console.log('Element:', element);
+    // 7. Tomar la primera fila
+    const fila = response.rows;
 
-    if (!element) {
-      alert('No hay elemento en la respuesta');
+    // 8. Verificar que haya elementos en la fila
+    if (!fila.elements || fila.elements.length === 0) {
+      console.error('No hay elementos en la fila');
+      alert('No se pudo calcular la distancia. No hay elementos.');
       return;
     }
 
-    if (element.status !== 'OK') {
-      alert('Error en el cálculo de distancia: ' + element.status);
+    // 9. Tomar el primer elemento
+    const elemento = fila.elements;
+
+    // 10. Verificar que el elemento tenga status OK
+    if (elemento.status !== 'OK') {
+      console.error('Elemento con status:', elemento.status);
+      alert('Error en el cálculo de distancia: ' + elemento.status);
       return;
     }
 
-    if (!element.distance) {
-      alert('No se pudo obtener la distancia');
+    // 11. Verificar que tenga distancia
+    if (!elemento.distance) {
+      console.error('No hay distancia en el elemento');
+      alert('No se pudo obtener la distancia.');
       return;
     }
 
-    const distanceKm = element.distance.value / 1000;
+    // 12. Calcular distancia en km
+    const distanceKm = elemento.distance.value / 1000;
     console.log('Distancia en km:', distanceKm);
 
+    // 13. Calcular precio
     const precio = await calcularPrecio(distanceKm);
+
+    // 14. Mostrar resultado
     document.getElementById('resultado').innerHTML = 
       `<h3>Precio: $${precio.toFixed(2)}</h3><p>Distancia: ${distanceKm.toFixed(2)} km</p>`;
   });
