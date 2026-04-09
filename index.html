@@ -224,6 +224,9 @@ async function cotizar() {
     return;
   }
 
+  console.log('Origen:', origenLatLng);
+  console.log('Destino:', destinoLatLng);
+
   // 2. Verificar que no sean el mismo punto
   if (origenLatLng.lat === destinoLatLng.lat && origenLatLng.lng === destinoLatLng.lng) {
     alert('¡El origen y destino no pueden ser el mismo punto!');
@@ -240,6 +243,15 @@ async function cotizar() {
     travelMode: 'DRIVING',
     unitSystem: google.maps.UnitSystem.METRIC
   }, async (response, status) => {
+    console.log('=== DISTANCE MATRIX RESPONSE ===');
+    console.log('Status:', status);
+    console.log('Response completa:', response);
+    console.log('Rows:', response.rows);
+    console.log('Primera fila:', response.rows);
+    console.log('Elements:', response.rows.elements);
+    console.log('Primer elemento:', response.rows.elements);
+    console.log('=== FIN RESPONSE ===');
+
     // 5. Verificar si la petición fue exitosa
     if (status !== 'OK') {
       console.error('Distance Matrix falló con status:', status);
