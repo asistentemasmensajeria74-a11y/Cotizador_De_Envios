@@ -248,8 +248,6 @@ async function cotizar() {
     console.log('Response completa:', response);
     console.log('Rows:', response.rows);
     console.log('Primera fila:', response.rows);
-    console.log('Elements:', response.rows.elements);
-    console.log('Primer elemento:', response.rows.elements);
     console.log('=== FIN RESPONSE ===');
 
     // 5. Verificar si la petición fue exitosa
@@ -269,38 +267,47 @@ async function cotizar() {
     // 7. Tomar la primera fila
     const fila = response.rows;
 
-    // 8. Verificar que haya elementos en la fila
-    if (!fila.elements || fila.elements.length === 0) {
-      console.error('No hay elementos en la fila');
-      alert('No se pudo calcular la distancia. No hay elementos.');
+    // 8. Verificar que haya elementos en la fila (puede ser array o objeto)
+    let elemento = null;
+
+    // Si fila es un array, tomar el primer elemento
+    if (Array.isArray(fila)) {
+      console.log('Fila es un array');
+      elemento = fila;
+    }
+    // Si fila es un objeto con propiedad elements
+    else if (fila.elements && fila.elements.length > 0) {
+      console.log('Fila tiene propiedad elements');
+      elemento = fila.elements;
+    }
+    else {
+      console.error('No se pudo encontrar elementos en la fila');
+      alert('No se pudo calcular la distancia. Estructura inesperada.');
       return;
     }
 
-    // 9. Tomar el primer elemento
-    const elemento = fila.elements;
-
-    // 10. Verificar que el elemento tenga status OK
+    // 9. Verificar que el elemento tenga status OK
     if (!elemento || elemento.status !== 'OK') {
       console.error('Elemento con status:', elemento ? elemento.status : 'undefined');
       alert('Error en el cálculo de distancia: ' + (elemento ? elemento.status : 'undefined'));
       return;
     }
 
-    // 11. Verificar que tenga distancia
+    // 10. Verificar que tenga distancia
     if (!elemento.distance) {
       console.error('No hay distancia en el elemento');
       alert('No se pudo obtener la distancia.');
       return;
     }
 
-    // 12. Calcular distancia en km
+    // 11. Calcular distancia en km
     const distanceKm = elemento.distance.value / 1000;
     console.log('Distancia en km:', distanceKm);
 
-    // 13. Calcular precio
+    // 12. Calcular precio
     const precio = await calcularPrecio(distanceKm);
 
-    // 14. Mostrar resultado
+    // 13. Mostrar resultado
     document.getElementById('resultado').innerHTML = 
       `<h3>Precio: $${precio.toFixed(2)}</h3><p>Distancia: ${distanceKm.toFixed(2)} km</p>`;
   });
