@@ -247,50 +247,27 @@ async function cotizar() {
       return;
     }
 
-    // 6. Verificar que haya filas en la respuesta
-    if (!response || !response.rows || response.rows.length === 0) {
-      console.error('Respuesta vacía de Distance Matrix');
-      alert('No se pudo obtener la distancia. Respuesta vacía.');
-      return;
-    }
-
-    // 7. Tomar la primera fila
+    // 6. Tomar la primera fila
     const fila = response.rows;
-    console.log('Fila:', fila);
 
-    // 8. Verificar que la fila tenga la propiedad elements
-    if (!fila.elements || fila.elements.length === 0) {
-      console.error('No hay elements en la fila');
-      alert('No se pudo calcular la distancia. No hay elements.');
-      return;
-    }
-
-    // 9. Tomar el primer elemento
+    // 7. Tomar el primer elemento
     const elemento = fila.elements;
-    console.log('Elemento:', elemento);
 
-    // 10. Verificar que el elemento tenga status OK
+    // 8. Verificar que el elemento tenga status OK
     if (!elemento || elemento.status !== 'OK') {
       console.error('Elemento con status:', elemento ? elemento.status : 'undefined');
       alert('Error en el cálculo de distancia: ' + (elemento ? elemento.status : 'undefined'));
       return;
     }
 
-    // 11. Verificar que tenga distancia
-    if (!elemento.distance) {
-      console.error('No hay distancia en el elemento');
-      alert('No se pudo obtener la distancia.');
-      return;
-    }
-
-    // 12. Calcular distancia en km
+    // 9. Obtener la distancia en km
     const distanceKm = elemento.distance.value / 1000;
     console.log('Distancia en km:', distanceKm);
 
-    // 13. Calcular precio
+    // 10. Calcular precio
     const precio = await calcularPrecio(distanceKm);
 
-    // 14. Mostrar resultado
+    // 11. Mostrar resultado
     document.getElementById('resultado').innerHTML = 
       `<h3>Precio: $${precio.toFixed(2)}</h3><p>Distancia: ${distanceKm.toFixed(2)} km</p>`;
   });
