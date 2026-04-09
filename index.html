@@ -68,13 +68,15 @@ function openMap(type) {
   const mapDiv = document.getElementById('map');
   mapDiv.style.display = 'block';
   map.setCenter(origenLatLng || { lat: 25.4208, lng: -101.0044 });
-  
+
+  // Limpiar eventos anteriores para evitar conflictos
+  google.maps.event.clearListeners(map, 'click');
+
   map.addListener('click', e => {
     const latLng = e.latLng.toJSON();
     if (type === 'origen') {
       origenLatLng = latLng;
       updateMarker('origen', latLng);
-      // Por ahora, solo mostramos las coordenadas
       document.getElementById('origenCalle').value = `Lat: ${latLng.lat.toFixed(4)}`;
       document.getElementById('origenColonia').value = `Lng: ${latLng.lng.toFixed(4)}`;
     } else {
@@ -112,25 +114,25 @@ function openMap(type) {
   });
 }*/
 
-    function updateMarker(type, latLng) {
-      if (type === 'origen') {
-        if (origenMarker) origenMarker.setMap(null);
-        origenMarker = new google.maps.Marker({
-          position: latLng,
-          map: map,
-          title: 'Origen',
-          icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-        });
-      } else {
-        if (destinoMarker) destinoMarker.setMap(null);
-        destinoMarker = new google.maps.Marker({
-          position: latLng,
-          map: map,
-          title: 'Destino',
-          icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-        });
-      }
-    }
+function updateMarker(type, latLng) {
+  if (type === 'origen') {
+    if (origenMarker) origenMarker.setMap(null);
+    origenMarker = new google.maps.Marker({
+      position: latLng,
+      map: map,
+      title: 'Origen',
+      icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+    });
+  } else {
+    if (destinoMarker) destinoMarker.setMap(null);
+    destinoMarker = new google.maps.Marker({
+      position: latLng,
+      map: map,
+      title: 'Destino',
+      icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+    });
+  }
+}
 
 async function cotizar() {
   if (!origenLatLng || !destinoLatLng) {
