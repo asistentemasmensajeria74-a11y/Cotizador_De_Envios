@@ -257,24 +257,30 @@ async function cotizar() {
     const ruta = result.routes;
     console.log('Ruta:', ruta);
 
-    // 8. Verificar que haya tramos (legs)
-    if (!ruta.legs || ruta.legs.length === 0) {
+    // 8. Si ruta es un array, tomar el primer elemento
+    let rutaObj = ruta;
+    if (Array.isArray(ruta)) {
+      rutaObj = ruta;
+      console.log('Ruta objeto:', rutaObj);
+    }
+
+    // 9. Verificar que haya tramos (legs)
+    if (!rutaObj.legs || rutaObj.legs.length === 0) {
       console.error('No hay tramos en la ruta');
       alert('No se pudo calcular la distancia. No hay tramos.');
       return;
     }
 
-    // 9. Tomar el primer tramo
-    const tramo = ruta.legs;
-    console.log('Tramo:', tramo);
+    // 10. Tomar el primer tramo
+    const tramo = rutaObj.legs;
 
-    // 10. Obtener la distancia en km
+    // 11. Obtener la distancia en km
     const distanceKm = tramo.distance.value / 1000;
     console.log('Distancia en km:', distanceKm);
 
-    // 11. Calcular precio
+    // 12. Calcular precio
     calcularPrecio(distanceKm).then(precio => {
-      // 12. Mostrar resultado
+      // 13. Mostrar resultado
       document.getElementById('resultado').innerHTML = 
         `<h3>Precio: $${precio.toFixed(2)}</h3><p>Distancia: ${distanceKm.toFixed(2)} km</p>`;
     });
