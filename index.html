@@ -268,9 +268,9 @@ async function cotizar() {
     const elemento = fila.elements;
 
     // 10. Verificar que el elemento tenga status OK
-    if (elemento.status !== 'OK') {
-      console.error('Elemento con status:', elemento.status);
-      alert('Error en el cálculo de distancia: ' + elemento.status);
+    if (!elemento || elemento.status !== 'OK') {
+      console.error('Elemento con status:', elemento ? elemento.status : 'undefined');
+      alert('Error en el cálculo de distancia: ' + (elemento ? elemento.status : 'undefined'));
       return;
     }
 
