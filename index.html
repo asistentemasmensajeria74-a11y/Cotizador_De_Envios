@@ -224,9 +224,6 @@ async function cotizar() {
     return;
   }
 
-  console.log('Origen:', origenLatLng);
-  console.log('Destino:', destinoLatLng);
-
   // 2. Verificar que no sean el mismo punto
   if (origenLatLng.lat === destinoLatLng.lat && origenLatLng.lng === destinoLatLng.lng) {
     alert('¡El origen y destino no pueden ser el mismo punto!');
@@ -236,27 +233,13 @@ async function cotizar() {
   // 3. Crear el servicio de Distance Matrix
   const service = new google.maps.DistanceMatrixService();
 
-// 4. Hacer la petición
-service.getDistanceMatrix({
-  origins: [new google.maps.LatLng(origenLatLng.lat, origenLatLng.lng)],
-  destinations: [new google.maps.LatLng(destinoLatLng.lat, destinoLatLng.lng)],
-  travelMode: 'DRIVING',
-  unitSystem: google.maps.UnitSystem.METRIC
-}, async (response, status) => {
-  console.log('=== DISTANCE MATRIX RESPONSE ===');
-  console.log('Status:', status);
-  console.log('Response completa:', response);
-  console.log('Rows:', response.rows);
-  console.log('Primera fila (rows):', response.rows);
-  
-  // NUEVO: Ver qué propiedades tiene rows
-  console.log('Propiedades de rows:', Object.keys(response.rows));
-  
-  // NUEVO: Ver el contenido completo de rows
-  console.log('Contenido completo de rows:', JSON.stringify(response.rows, null, 2));
-  
-  console.log('=== FIN RESPONSE ===');
-
+  // 4. Hacer la petición
+  service.getDistanceMatrix({
+    origins: [new google.maps.LatLng(origenLatLng.lat, origenLatLng.lng)],
+    destinations: [new google.maps.LatLng(destinoLatLng.lat, destinoLatLng.lng)],
+    travelMode: 'DRIVING',
+    unitSystem: google.maps.UnitSystem.METRIC
+  }, async (response, status) => {
     // 5. Verificar si la petición fue exitosa
     if (status !== 'OK') {
       console.error('Distance Matrix falló con status:', status);
@@ -273,48 +256,41 @@ service.getDistanceMatrix({
 
     // 7. Tomar la primera fila
     const fila = response.rows;
+    console.log('Fila:', fila);
 
-    // 8. Verificar que haya elementos en la fila (puede ser array o objeto)
-    let elemento = null;
-
-    // Si fila es un array, tomar el primer elemento
-    if (Array.isArray(fila)) {
-      console.log('Fila es un array');
-      elemento = fila;
-    }
-    // Si fila es un objeto con propiedad elements
-    else if (fila.elements && fila.elements.length > 0) {
-      console.log('Fila tiene propiedad elements');
-      elemento = fila.elements;
-    }
-    else {
-      console.error('No se pudo encontrar elementos en la fila');
-      alert('No se pudo calcular la distancia. Estructura inesperada.');
+    // 8. Verificar que la fila tenga la propiedad elements
+    if (!fila.elements || fila.elements.length === 0) {
+      console.error('No hay elements en la fila');
+      alert('No se pudo calcular la distancia. No hay elements.');
       return;
     }
 
-    // 9. Verificar que el elemento tenga status OK
+    // 9. Tomar el primer elemento
+    const elemento = fila.elements;
+    console.log('Elemento:', elemento);
+
+    // 10. Verificar que el elemento tenga status OK
     if (!elemento || elemento.status !== 'OK') {
       console.error('Elemento con status:', elemento ? elemento.status : 'undefined');
       alert('Error en el cálculo de distancia: ' + (elemento ? elemento.status : 'undefined'));
       return;
     }
 
-    // 10. Verificar que tenga distancia
+    // 11. Verificar que tenga distancia
     if (!elemento.distance) {
       console.error('No hay distancia en el elemento');
       alert('No se pudo obtener la distancia.');
       return;
     }
 
-    // 11. Calcular distancia en km
+    // 12. Calcular distancia en km
     const distanceKm = elemento.distance.value / 1000;
     console.log('Distancia en km:', distanceKm);
 
-    // 12. Calcular precio
+    // 13. Calcular precio
     const precio = await calcularPrecio(distanceKm);
 
-    // 13. Mostrar resultado
+    // 14. Mostrar resultado
     document.getElementById('resultado').innerHTML = 
       `<h3>Precio: $${precio.toFixed(2)}</h3><p>Distancia: ${distanceKm.toFixed(2)} km</p>`;
   });
