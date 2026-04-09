@@ -69,7 +69,7 @@ function openMap(type) {
   mapDiv.style.display = 'block';
   map.setCenter(origenLatLng || { lat: 25.4208, lng: -101.0044 });
 
-  // Limpiar eventos anteriores para evitar conflictos
+  // Limpiar eventos anteriores
   google.maps.event.clearListeners(map, 'click');
 
   map.addListener('click', e => {
@@ -77,16 +77,39 @@ function openMap(type) {
     if (type === 'origen') {
       origenLatLng = latLng;
       updateMarker('origen', latLng);
-      document.getElementById('origenCalle').value = `Lat: ${latLng.lat.toFixed(4)}`;
-      document.getElementById('origenColonia').value = `Lng: ${latLng.lng.toFixed(4)}`;
+      obtenerDireccion(latLng, 'origen');
     } else {
       destinoLatLng = latLng;
       updateMarker('destino', latLng);
-      document.getElementById('destinoCalle').value = `Lat: ${latLng.lat.toFixed(4)}`;
-      document.getElementById('destinoColonia').value = `Lng: ${latLng.lng.toFixed(4)}`;
+      obtenerDireccion(latLng, 'destino');
     }
   });
 }
+
+function obtenerDireccion(latLng, type) {
+  const geocoder = new google.maps.Geocoder();
+  geocoder.geocode({ location: latLng }, (results, status) => {
+    if (status !== 'OK' || !results || results.length === 0) {
+      console.error('Geocoding failed:', status);
+      alert('No se pudo obtener la dirección. Verifica que la API de Geocoding esté habilitada.');
+      return;
+    }
+
+    const address = results.formatted_address;
+    const parts = address.split(', ');
+    const calle = parts || '';
+    const colonia = parts || '';
+
+    if (type === 'origen') {
+      document.getElementById('origenCalle').value = calle;
+      document.getElementById('origenColonia').value = colonia;
+    } else {
+      document.getElementById('destinoCalle').value = calle;
+      document.getElementById('destinoColonia').value = colonia;
+    }
+  });
+}
+    
 
 /* function reverseGeocode(latLng, type) {
   const geocoder = new google.maps.Geocoder();
