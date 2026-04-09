@@ -116,9 +116,15 @@ function obtenerDireccion(latLng, tipo) {
     // 7. Intentar usar formatted_address (opción principal)
     if (primerResultado.formatted_address) {
       console.log('Usando formatted_address:', primerResultado.formatted_address);
-      const partes = primerResultado.formatted_address.split(', ');
-      calle = partes || 'Calle no disponible';
-      colonia = partes || 'Colonia no disponible';
+
+      // ✅ Validar que formatted_address sea string antes de split
+      if (typeof primerResultado.formatted_address === 'string') {
+        const partes = primerResultado.formatted_address.split(', ');
+        calle = partes || 'Calle no disponible';
+        colonia = partes || 'Colonia no disponible';
+      } else {
+        console.error('formatted_address no es string:', typeof primerResultado.formatted_address);
+      }
     }
     // 8. Si no hay formatted_address, usar address_components (fallback)
     else if (primerResultado.address_components) {
