@@ -138,28 +138,56 @@ async function cotizar() {
     return;
   }
 
+  console.log('Origen:', origenLatLng);
+  console.log('Destino:', destinoLatLng);
+
+  // Validar que no sean el mismo punto
+  if (origenLatLng.lat === destinoLatLng.lat && origenLatLng.lng === destinoLatLng.lng) {
+    alert('¡El origen y destino no pueden ser el mismo punto!');
+    return;
+  }
+
   const service = new google.maps.DistanceMatrixService();
   service.getDistanceMatrix({
     origins: [origenLatLng],
     destinations: [destinoLatLng],
     travelMode: 'DRIVING'
   }, async (response, status) => {
-    console.log('Status:', status);
-    console.log('Response:', response);
+    console.log('Distance Matrix status:', status);
+    console.log('Distance Matrix response:', response);
 
     if (status !== 'OK') {
-      alert('Error: ' + status);
+      alert('Error al calcular distancia: ' + status);
       return;
     }
 
-    if (!response.rows.elements.distance) {
-      alert('No se pudo calcular la distancia');
+    if (!response || !response.rows || response.rows.length === 0) {
+      alert('Respuesta vacía de Distance Matrix');
       return;
     }
 
-    const distanceKm = response.rows.elements.distance.value / 1000;
+    const element = response.rows.elements;
+    console.log('Element:', element);
+
+    if (!element) {
+      alert('No hay elemento en la respuesta');
+      return;
+    }
+
+    if (element.status !== 'OK') {
+      alert('Error en el cálculo de distancia: ' + element.status);
+      return;
+    }
+
+    if (!element.distance) {
+      alert('No se pudo obtener la distancia');
+      return;
+    }
+
+    const distanceKm = element.distance.value / 1000;
+    console.log('Distancia en km:', distanceKm);
+
     const precio = await calcularPrecio(distanceKm);
-    
     document.getElementById('resultado').innerHTML = 
       `<h3>Precio: $${precio.toFixed(2)}</h3><p>Distancia: ${distanceKm.toFixed(2)} km</p>`;
   });
