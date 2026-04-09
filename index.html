@@ -253,26 +253,28 @@ async function cotizar() {
       return;
     }
 
-    // 7. Tomar la primera ruta
-    const ruta = result.routes;
-    console.log('=== RUTA ===');
-    console.log('Ruta:', ruta);
-    console.log('Propiedades de ruta:', Object.keys(ruta));
-    console.log('Ruta.legs:', ruta.legs);
-    console.log('Contenido completo de ruta:', JSON.stringify(ruta, null, 2));
-    console.log('=== FIN RUTA ===');
+// 7. Tomar la primera ruta (que es un array, así que accedemos al primer elemento)
+let ruta = result.routes;
 
-    // 8. Verificar que haya tramos (legs)
-    if (!ruta.legs || ruta.legs.length === 0) {
-      console.error('No hay tramos en la ruta');
-      alert('No se pudo calcular la distancia. No hay tramos.');
-      return;
-    }
+// Si es un array, tomar el primer elemento
+if (Array.isArray(ruta)) {
+  ruta = ruta;
+}
 
-    // 9. Tomar el primer tramo
-    const tramo = ruta.legs;
-    console.log('Tramo:', tramo);
+console.log('Ruta objeto:', ruta);
 
+// 8. Verificar que haya tramos (legs)
+if (!ruta.legs || ruta.legs.length === 0) {
+  console.error('No hay tramos en la ruta');
+  alert('No se pudo calcular la distancia. No hay tramos.');
+  return;
+}
+
+// 9. Tomar el primer tramo
+const tramo = ruta.legs;
+console.log('Tramo:', tramo);
+console.log('Distancia:', tramo.distance);
+    
     // 10. Obtener la distancia en km
     const distanceKm = tramo.distance.value / 1000;
     console.log('Distancia en km:', distanceKm);
