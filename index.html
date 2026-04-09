@@ -246,43 +246,40 @@ async function cotizar() {
       return;
     }
 
-// 6. Verificar que haya rutas
-if (!result.routes || result.routes.length === 0) {
-  console.error('No hay rutas disponibles');
-  alert('No se pudo calcular la distancia. No hay rutas.');
-  return;
-}
+    // 6. Verificar que haya rutas
+    if (!result.routes || result.routes.length === 0) {
+      console.error('No hay rutas disponibles');
+      alert('No se pudo calcular la distancia. No hay rutas.');
+      return;
+    }
 
-// 7. Tomar la primera ruta
-const ruta = result.routes;
-console.log('=== RUTA ===');
-console.log('Ruta:', ruta);
-console.log('Propiedades de ruta:', Object.keys(ruta));
-console.log('Ruta.legs:', ruta.legs);
-console.log('Contenido completo de ruta:', JSON.stringify(ruta, null, 2));
-console.log('=== FIN RUTA ===');
+    // 7. Tomar la primera ruta
+    const ruta = result.routes;
+    console.log('=== RUTA ===');
+    console.log('Ruta:', ruta);
+    console.log('Propiedades de ruta:', Object.keys(ruta));
+    console.log('Ruta.legs:', ruta.legs);
+    console.log('Contenido completo de ruta:', JSON.stringify(ruta, null, 2));
+    console.log('=== FIN RUTA ===');
 
-// 8. Verificar que haya tramos (legs)
-if (!ruta.legs || ruta.legs.length === 0) {
-  console.error('No hay tramos en la ruta');
-  alert('No se pudo calcular la distancia. No hay tramos.');
-  return;
-}
+    // 8. Verificar que haya tramos (legs)
+    if (!ruta.legs || ruta.legs.length === 0) {
+      console.error('No hay tramos en la ruta');
+      alert('No se pudo calcular la distancia. No hay tramos.');
+      return;
+    }
 
-// 9. Tomar el primer tramo
-const tramo = ruta.legs;
-console.log('Tramo:', tramo);
+    // 9. Tomar el primer tramo
+    const tramo = ruta.legs;
+    console.log('Tramo:', tramo);
 
-    // 10. Tomar el primer tramo
-    const tramo = rutaObj.legs;
-
-    // 11. Obtener la distancia en km
+    // 10. Obtener la distancia en km
     const distanceKm = tramo.distance.value / 1000;
     console.log('Distancia en km:', distanceKm);
 
-    // 12. Calcular precio
+    // 11. Calcular precio
     calcularPrecio(distanceKm).then(precio => {
-      // 13. Mostrar resultado
+      // 12. Mostrar resultado
       document.getElementById('resultado').innerHTML = 
         `<h3>Precio: $${precio.toFixed(2)}</h3><p>Distancia: ${distanceKm.toFixed(2)} km</p>`;
     });
