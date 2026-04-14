@@ -274,38 +274,35 @@ async function cotizar() {
 }
 
 async function calcularPrecio(km) {
-  // 1. URL de Google Sheets (correcta, sin duplicados)
-  const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-0_VsgcgGxVF2H4xvyycPW1FJYfhFzJZKqX3YWQurUe-J3U2u9AQ79YiAW4LvGozu3xvbgalFLJF-/pub?gid=154545784&single=true&output=csv';
+  // 1. URL de tu Apps Script con la acción obtenerPreciosEnvios
+  const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbx_aBWgPzdKEWqiEFSuzyYZ95Lvc23ijU8dNqy8eckShQfL1oryFGKx1fIOThhFlXEs/exec?action=obtenerPreciosEnvios';
   
   try {
-    // 2. Obtener datos de Google Sheets
-    const response = await fetch(sheetUrl);
-    const text = await response.text();
+    // 2. Obtener datos del Apps Script
+    const response = await fetch(appsScriptUrl);
+    const data = await response.json();
     
-    // 3. Dividir en filas y columnas
-    const rows = text.split('\n').map(r => r.split(','));
+    console.log('Datos del Apps Script:', data);
     
-    // 4. Tomar la segunda fila (índice 1) que contiene los datos
-    const data = rows;
+    if (!data.success) {
+      console.error('Error:', data.message);
+      alert('Error al obtener precios: ' + data.message);
+      return 0;
+    }
     
-    console.log('Datos de Google Sheets:', data);
-    
-    // 5. Extraer valores de cada columna
-    // Columna 0: Partida
-    // Columna 1: Costo_Km
-    // Columna 2: Servicio_Rapido (%)
-    const partida = parseFloat(data);
-    const costoKm = parseFloat(data);
-    const servicioRapido = parseFloat(data) / 100; // porcentaje a decimal
+    // 3. Extraer valores
+    const partida = parseFloat(data.Partida) || 0;
+    const costoKm = parseFloat(data.Costo_Km) || 0;
+    const servicioRapido = parseFloat(data.Servicio_Rapido) / 100; // porcentaje a decimal
     
     console.log('Partida:', partida);
     console.log('Costo por km:', costoKm);
     console.log('Servicio rápido %:', servicioRapido);
     
-    // 6. Calcular total
+    // 4. Calcular total
     let total = partida + (km * costoKm);
     
-    // 7. Por ahora, servicio normal (sin recargo)
+    // 5. Por ahora, servicio normal (sin recargo)
     // Luego puedes agregar checkbox para "servicio rápido"
     
     console.log('Precio total:', total);
@@ -313,7 +310,7 @@ async function calcularPrecio(km) {
     return total;
     
   } catch (error) {
-    console.error('Error al obtener datos de Google Sheets:', error);
+    console.error('Error al obtener datos del Apps Script:', error);
     alert('Error al calcular el precio. Intenta de nuevo.');
     return 0;
   }
