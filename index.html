@@ -274,12 +274,19 @@ async function cotizar() {
 }
 
 async function calcularPrecio(km) {
-  // 1. URL de tu Apps Script con la acción obtenerPreciosEnvios
-  const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbx_aBWgPzdKEWqiEFSuzyYZ95Lvc23ijU8dNqy8eckShQfL1oryFGKx1fIOThhFlXEs/exec?action=obtenerPreciosEnvios';
+  // 1. URL de tu Apps Script
+  const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbx_aBWgPzdKEWqiEFSuzyYZ95Lvc23ijU8dNqy8eckShQfL1oryFGKx1fIOThhFlXEs/exec';
   
   try {
-    // 2. Obtener datos del Apps Script
-    const response = await fetch(appsScriptUrl);
+    // 2. Obtener datos del Apps Script usando POST
+    const response = await fetch(appsScriptUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'action=obtenerPreciosEnvios'
+    });
+    
     const data = await response.json();
     
     console.log('Datos del Apps Script:', data);
@@ -303,7 +310,6 @@ async function calcularPrecio(km) {
     let total = partida + (km * costoKm);
     
     // 5. Por ahora, servicio normal (sin recargo)
-    // Luego puedes agregar checkbox para "servicio rápido"
     
     console.log('Precio total:', total);
     
