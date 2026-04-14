@@ -238,7 +238,6 @@ function calcularDistanciaHaversine(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
-// Función para cotizar
 async function cotizar() {
   // 1. Verificar que haya origen y destino
   if (!origenLatLng || !destinoLatLng) {
@@ -274,11 +273,9 @@ async function cotizar() {
 }
 
 async function calcularPrecio(km) {
-  // 1. URL de tu Apps Script
   const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbx_aBWgPzdKEWqiEFSuzyYZ95Lvc23ijU8dNqy8eckShQfL1oryFGKx1fIOThhFlXEs/exec';
   
   try {
-    // 2. Obtener datos del Apps Script usando POST
     const response = await fetch(appsScriptUrl, {
       method: 'POST',
       headers: {
@@ -289,33 +286,81 @@ async function calcularPrecio(km) {
     
     const data = await response.json();
     
-    console.log('=== RESPUESTA DEL APPS SCRIPT ===');
-    console.log('Datos del Apps Script:', data);
-    console.log('Objeto completo:', JSON.stringify(data, null, 2));
-    console.log('Claves del objeto:', Object.keys(data));
-    console.log('=== FIN RESPUESTA ===');
-    
     if (!data.success) {
       console.error('Error:', data.message);
       alert('Error al obtener precios: ' + data.message);
       return 0;
     }
     
-    // 3. Extraer valores
+    // Extraer datos de la hoja
     const partida = parseFloat(data.Partida) || 0;
     const costoKm = parseFloat(data.Costo_Km) || 0;
-    const servicioRapido = parseFloat(data.Servicio_Rapido) / 100; // porcentaje a decimal
+    const servicioRapidoPorcentaje = parseFloat(data.Servicio_Rapido) || 0;
+    const extraHoraPico = parseFloat(data.Extra_Hora_Pico) || 0; 
+    const extraNocturno = parseFloat(data.Extra_nocturno) || 0; 
     
-    console.log('Partida:', partida);
-    console.log('Costo por km:', costoKm);
-    console.log('Servicio rápido %:', servicioRapido);
-    console.log('Km a cobrar:', km);
+    // Obtener hora actual (formato 24 horas)
+    const ahora = new Date();
+    const horaActual = ahora.getHours();
+    const minutoActual = ahora.getMinutes();
+    const horaActualDecimal = horaActual + (minutoActual / 60); 
     
-    // 4. Calcular total
+    // Función para convertir hora de texto "HH:MM" a decimal
+    function convertirHoraADecimal(horaTexto) {
+      if (!horaTexto) return -1; 
+      const partes = horaTexto.split(':');
+      const horas = parseInt(partes[0], 10);
+      const minutos = parseInt(partes[1], 10) || 0;
+      return horas + (minutos / 60);
+    }
+    
+    // Convertir rangos de la hoja a decimal
+    const horaPicoInDecimal = convertirHoraADecimal(data.Hora_Pico_in);
+    const horaPicoFinDecimal = convertirHoraADecimal(data.Hora_pico_fin);
+    const horaNocturnoInDecimal = convertirHoraADecimal(data.Hora_Nocturno_in);
+    const horaNocturnoFinDecimal = convertirHoraADecimal(data.Hora_Nocturno_fin);
+    
+    // Verificar si está en hora pico
+    const estaEnHoraPico = horaActualDecimal >= horaPicoInDecimal && horaActualDecimal <= horaPicoFinDecimal;
+    
+    // Verificar si está en hora nocturna (considera si cruza la medianoche)
+    let estaEnHoraNocturna = false;
+    if (horaNocturnoInDecimal > horaNocturnoFinDecimal) {
+      estaEnHoraNocturna = horaActualDecimal >= horaNocturnoInDecimal || horaActualDecimal <= horaNocturnoFinDecimal;
+    } else {
+      estaEnHoraNocturna = horaActualDecimal >= horaNocturnoInDecimal && horaActualDecimal <= horaNocturnoFinDecimal;
+    }
+    
+    // Obtener si el usuario seleccionó servicio rápido
+    const usaServicioRapido = document.getElementById('servicioRapido').checked;
+    
+    // Cálculo base
     let total = partida + (km * costoKm);
     
-    console.log('Cálculo: ' + partida + ' + (' + km + ' * ' + costoKm + ') = ' + total);
-    console.log('Precio total final:', total);
+    // Aplicar servicio rápido si está seleccionado
+    if (usaServicioRapido) {
+      total += total * (servicioRapidoPorcentaje / 100);
+      
+      // Si además está en hora pico, aplicar extra de hora pico
+      if (estaEnHoraPico) {
+        total += total * (extraHoraPico / 100); 
+      }
+    }
+    
+    // Aplicar extra nocturno si está en horario nocturno
+    if (estaEnHoraNocturna) {
+      total += total * (extraNocturno / 100); 
+    }
+    
+    // Logs para depuración
+    console.log('=== CÁLCULO DETALLADO ===');
+    console.log('Hora actual:', `${horaActual}:${minutoActual.toString().padStart(2, '0')}`);
+    console.log('¿Está en hora pico?', estaEnHoraPico);
+    console.log('¿Está en hora nocturna?', estaEnHoraNocturna);
+    console.log('¿Usa servicio rápido?', usaServicioRapido);
+    console.log('Total base:', partida + (km * costoKm));
+    console.log('Total final:', total);
+    console.log('=== FIN CÁLCULO ===');
     
     return total;
     
