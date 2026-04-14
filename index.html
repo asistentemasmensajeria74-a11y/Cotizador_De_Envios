@@ -253,14 +253,18 @@ async function cotizar() {
       return;
     }
 
-// 7. Tomar la primera ruta (que es un array, así que accedemos al primer elemento)
+// 7. Tomar la primera ruta
 let ruta = result.routes;
+console.log('Ruta antes:', ruta);
+console.log('Tipo de ruta:', typeof ruta);
+console.log('¿Es array?:', Array.isArray(ruta));
 
-// Si es un array, tomar el primer elemento
+// Si es array, acceder al primer elemento
 if (Array.isArray(ruta)) {
+  console.log('Longitud del array:', ruta.length);
+  console.log('Primer elemento:', ruta);
   ruta = ruta;
 }
-
 console.log('Ruta objeto:', ruta);
 
 // 8. Verificar que haya tramos (legs)
