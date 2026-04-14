@@ -309,17 +309,17 @@ async function calcularPrecio(km) {
     
     // Aplicar servicio rápido si está seleccionado
     if (usaServicioRapido) {
-      total += total * (servicioRapidoPorcentaje / 100);
+      total += total * servicioRapidoPorcentaje;
       
       // Si además está en hora pico, aplicar extra de hora pico
       if (estaEnHoraPico) {
-        total += total * (extraHoraPico / 100); 
+        total += total * extraHoraPico; 
       }
     }
     
     // Aplicar extra nocturno si está en horario nocturno
     if (estaEnHoraNocturna) {
-      total += total * (extraNocturno / 100); 
+      total += total * extraNocturno; 
     }
     
     // Logs para depuración
