@@ -57,22 +57,25 @@
       });
     }
 
-    function updateMarker(type, latLng) {
-      const marker = new google.maps.Marker({
-        position: latLng,
-        map: map,
-        title: type === 'origen' ? 'Origen' : 'Destino'
-      });
-
-      if (type === 'origen') {
-        if (origenMarker) origenMarker.setMap(null);
-        origenMarker = marker;
-      } else {
-        if (destinoMarker) destinoMarker.setMap(null);
-        destinoMarker = marker;
-      }
-    }
-
+function updateMarker(type, latLng) {
+  if (type === 'origen') {
+    if (origenMarker) origenMarker.setMap(null);
+    origenMarker = new google.maps.Marker({
+      position: latLng,
+      map: map,
+      title: 'Origen',
+      icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+    });
+  } else {
+    if (destinoMarker) destinoMarker.setMap(null);
+    destinoMarker = new google.maps.Marker({
+      position: latLng,
+      map: map,
+      title: 'Destino',
+      icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+    });
+  }
+}
     function selectOriginLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
