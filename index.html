@@ -255,17 +255,29 @@ async function cotizar() {
 
 // 7. Tomar la primera ruta
 let ruta = result.routes;
-console.log('Ruta antes:', ruta);
+console.log('=== ESTRUCTURA DE RUTA ===');
+console.log('Ruta:', ruta);
 console.log('Tipo de ruta:', typeof ruta);
 console.log('¿Es array?:', Array.isArray(ruta));
 
 // Si es array, acceder al primer elemento
 if (Array.isArray(ruta)) {
   console.log('Longitud del array:', ruta.length);
-  console.log('Primer elemento:', ruta);
+  console.log('Primer elemento (ruta):', ruta);
+  console.log('Tipo de ruta:', typeof ruta);
+  console.log('¿ruta es array?:', Array.isArray(ruta));
+  
+  // Ver propiedades de ruta
+  if (ruta) {
+    console.log('Propiedades de ruta:', Object.keys(ruta));
+  }
+  
   ruta = ruta;
 }
-console.log('Ruta objeto:', ruta);
+
+console.log('Ruta después:', ruta);
+console.log('Ruta.legs:', ruta ? ruta.legs : 'undefined');
+console.log('=== FIN ESTRUCTURA ===');
 
 // 8. Verificar que haya tramos (legs)
 if (!ruta.legs || ruta.legs.length === 0) {
