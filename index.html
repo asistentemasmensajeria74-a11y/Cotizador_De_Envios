@@ -230,68 +230,25 @@ async function cotizar() {
     return;
   }
 
-  // 3. Crear el servicio de Directions
-  const service = new google.maps.DirectionsService();
+  // 3. Calcular distancia usando Haversine
+  let distanceKm = calcularDistanciaHaversine(
+    origenLatLng.lat, 
+    origenLatLng.lng, 
+    destinoLatLng.lat, 
+    destinoLatLng.lng
+  );
 
-  // 4. Hacer la petición
-  service.route({
-    origin: new google.maps.LatLng(origenLatLng.lat, origenLatLng.lng),
-    destination: new google.maps.LatLng(destinoLatLng.lat, destinoLatLng.lng),
-    travelMode: 'DRIVING'
-  }, function(result, status) {
-    // 5. Verificar si la petición fue exitosa
-    if (status !== 'OK') {
-      console.error('Directions falló con status:', status);
-      alert('Error al calcular distancia: ' + status);
-      return;
-    }
+  // 4. Agregar 10% por diferencia entre línea recta y carreteras
+  distanceKm = distanceKm * 1.10;
 
-    // 6. Verificar que haya rutas
-    if (!result.routes || result.routes.length === 0) {
-      console.error('No hay rutas disponibles');
-      alert('No se pudo calcular la distancia. No hay rutas.');
-      return;
-    }
+  console.log('Distancia en km (con 10% ajuste):', distanceKm);
 
-// 7. Tomar la primera ruta
-let ruta = result.routes;
+  // 5. Calcular precio usando datos de Google Sheets
+  const precio = await calcularPrecio(distanceKm);
 
-// Si es array, acceder al primer elemento
-if (Array.isArray(ruta)) {
-  ruta = ruta;
-  
-  // Si el primer elemento TAMBIÉN es array, acceder al primer elemento de ese array
-  if (Array.isArray(ruta)) {
-    ruta = ruta;
-  }
-}
-
-console.log('Ruta final:', ruta);
-console.log('Ruta.legs:', ruta ? ruta.legs : 'undefined');
-
-// 8. Verificar que haya tramos (legs)
-if (!ruta.legs || ruta.legs.length === 0) {
-  console.error('No hay tramos en la ruta');
-  alert('No se pudo calcular la distancia. No hay tramos.');
-  return;
-}
-
-// 9. Tomar el primer tramo
-const tramo = ruta.legs;
-console.log('Tramo:', tramo);
-console.log('Distancia:', tramo.distance);
-    
-    // 10. Obtener la distancia en km
-    const distanceKm = tramo.distance.value / 1000;
-    console.log('Distancia en km:', distanceKm);
-
-    // 11. Calcular precio
-    calcularPrecio(distanceKm).then(precio => {
-      // 12. Mostrar resultado
-      document.getElementById('resultado').innerHTML = 
-        `<h3>Precio: $${precio.toFixed(2)}</h3><p>Distancia: ${distanceKm.toFixed(2)} km</p>`;
-    });
-  });
+  // 6. Mostrar resultado
+  document.getElementById('resultado').innerHTML = 
+    `<h3>Precio: $${precio.toFixed(2)}</h3><p>Distancia: ${distanceKm.toFixed(2)} km</p>`;
 }
 
     async function calcularPrecio(km) {
