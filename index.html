@@ -288,8 +288,9 @@ async function calcularPrecio(km) {
     });
     
     const data = await response.json();
-    
     console.log('Datos del Apps Script:', data);
+    console.log('Objeto completo:', JSON.stringify(data, null, 2)); // ← NUEVO: ver estructura completa
+    
     
     if (!data.success) {
       console.error('Error:', data.message);
