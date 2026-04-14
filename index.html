@@ -288,9 +288,12 @@ async function calcularPrecio(km) {
     });
     
     const data = await response.json();
-    console.log('Datos del Apps Script:', data);
-    console.log('Objeto completo:', JSON.stringify(data, null, 2)); // ← NUEVO: ver estructura completa
     
+    console.log('=== RESPUESTA DEL APPS SCRIPT ===');
+    console.log('Datos del Apps Script:', data);
+    console.log('Objeto completo:', JSON.stringify(data, null, 2));
+    console.log('Claves del objeto:', Object.keys(data));
+    console.log('=== FIN RESPUESTA ===');
     
     if (!data.success) {
       console.error('Error:', data.message);
@@ -298,29 +301,23 @@ async function calcularPrecio(km) {
       return 0;
     }
     
-// 3. Extraer valores
-const partida = parseFloat(data.Partida) || 0;
-const costoKm = parseFloat(data.Costo_Km) || 0;
-const servicioRapido = parseFloat(data.Servicio_Rapido) / 100; // porcentaje a decimal
-
-console.log('Partida:', partida);
-console.log('Costo por km:', costoKm);
-console.log('Servicio rápido %:', servicioRapido);
-console.log('Km a cobrar:', km);
-
-// 4. Calcular total
-// Fórmula: Partida + (km * Costo_Km)
-let total = partida + (km * costoKm);
-
-console.log('Cálculo: ' + partida + ' + (' + km + ' * ' + costoKm + ') = ' + total);
-
-// 5. Por ahora, servicio normal (sin recargo)
-// Cuando agregues checkbox para servicio rápido, aquí sumarías:
-// if (esServicioRapido) { total = total + (total * servicioRapido); }
-
-console.log('Precio total final:', total);
-
-return total;
+    // 3. Extraer valores
+    const partida = parseFloat(data.Partida) || 0;
+    const costoKm = parseFloat(data.Costo_Km) || 0;
+    const servicioRapido = parseFloat(data.Servicio_Rapido) / 100; // porcentaje a decimal
+    
+    console.log('Partida:', partida);
+    console.log('Costo por km:', costoKm);
+    console.log('Servicio rápido %:', servicioRapido);
+    console.log('Km a cobrar:', km);
+    
+    // 4. Calcular total
+    let total = partida + (km * costoKm);
+    
+    console.log('Cálculo: ' + partida + ' + (' + km + ' * ' + costoKm + ') = ' + total);
+    console.log('Precio total final:', total);
+    
+    return total;
     
   } catch (error) {
     console.error('Error al obtener datos del Apps Script:', error);
