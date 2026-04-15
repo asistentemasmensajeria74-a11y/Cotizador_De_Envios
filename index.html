@@ -5,13 +5,19 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPEU32sU9W6r-if_fvGDAMG3Y2Ks8M2X4&callback=initMap" async defer></script>
    <style>
+     /* Reset general para eliminar espacios por defecto */
+     * {
+       margin: 0;
+       padding: 0;
+       box-sizing: border-box;
+     }
      /* Mapa: altura base y ajuste para celular */
      #map { 
        height: 200px; /* Altura base más pequeña */
        margin: 10px 0; 
      }
      
-     .form-group { margin: 15px 0; }
+     .form-group { margin: 10px 0; /* Menos margen entre grupos de formularios */ }
      
      body { 
        font-family: Arial, sans-serif; 
@@ -19,6 +25,7 @@
        margin: 20px auto; 
        padding: 0 20px; 
        font-size: 16px; 
+       line-height: 1.2; /* Menos espacio entre líneas de texto */
      }
      
      /* Botones generales */
@@ -31,26 +38,30 @@
        box-sizing: border-box; 
      }
      
+     /* Inputs de dirección: tamaño reducido */
      input { 
-       padding: 12px; 
-       margin: 5px 0; 
+       padding: 8px 10px; /* Menos padding interno */
+       margin: 3px 0; /* Menos margen entre inputs */
        width: 100%; 
        box-sizing: border-box; 
-       font-size: 16px; 
+       font-size: 14px; /* Tamaño de letra más pequeño */
+       line-height: 1.2; /* Menos espacio entre líneas en el input */
      }
      
      #resultado { 
-       margin-top: 20px; 
+       margin-top: 15px; /* Menos margen arriba del resultado */
        font-size: 1.3em; 
        color: #333; 
+       line-height: 1.2; /* Menos espacio entre líneas en el resultado */
      }
      
      .servicio-rapido { 
-       margin: 20px 0; 
-       padding: 15px; 
+       margin: 15px 0; /* Menos margen alrededor del servicio rápido */
+       padding: 10px; /* Menos padding interno */
        background-color: #f0f0f0; 
        border-radius: 5px; 
-       font-size: 16px; 
+       font-size: 14px; /* Tamaño de letra más pequeño */
+       line-height: 1.2; /* Menos espacio entre líneas */
      }
      
      /* Contenedor de botones: alinea en un solo renglón */
@@ -67,6 +78,7 @@
        width: auto; /* Ancho automático según contenido */
        font-size: 13px; /* Tamaño de letra más pequeño */
        white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+       line-height: 1.2; /* Menos espacio entre líneas en el botón */
      }
      /* Ajustes para pantallas grandes (PC) */
      @media (min-width: 600px) {
@@ -90,13 +102,23 @@
        #map {
          height: 180px;
        }
+       /* Inputs aún más pequeños en celulares muy pequeños */
+       input {
+         padding: 6px 8px;
+         font-size: 13px;
+       }
+       /* Servicio rápido más pequeño en celulares muy pequeños */
+       .servicio-rapido {
+         padding: 8px;
+         font-size: 13px;
+       }
      }
    </style>
  </head>
  <body>
-   <h2 style="font-size: 1.8em;">Cotizador de Envíos</h2>
+   <h2 style="font-size: 1.8em; line-height: 1.2;">Cotizador de Envíos</h2>
    <!-- Origen -->
-   <h3 style="font-size: 1.5em;">Origen (Saltillo, Coahuila)</h3>
+   <h3 style="font-size: 1.5em; line-height: 1.2; margin-bottom: 5px;">Origen (Saltillo, Coahuila)</h3>
    <div class="form-group">
      <input type="text" id="origenCalle" placeholder="Calle y número">
      <input type="text" id="origenColonia" placeholder="Colonia">
@@ -106,7 +128,7 @@
      </div>
    </div>
    <!-- Destino -->
-   <h3 style="font-size: 1.5em;">Destino</h3>
+   <h3 style="font-size: 1.5em; line-height: 1.2; margin-bottom: 5px;">Destino</h3>
    <div class="form-group">
      <input type="text" id="destinoCalle" placeholder="Calle y número">
      <input type="text" id="destinoColonia" placeholder="Colonia">
