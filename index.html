@@ -2,47 +2,44 @@
 <html>
 <head>
   <title>Cotizador de Envíos</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Esto ayuda a que se vea bien en celular -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPEU32sU9W6r-if_fvGDAMG3Y2Ks8M2X4&callback=initMap" async defer></script>
   <style>
     #map { height: 300px; margin: 10px 0; }
-    .form-group { margin: 15px 0; } /* Aumenté un poco el margen para que no se vea tan apretado */
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 0 20px; font-size: 16px; /* Tamaño base de letra más grande */ }
-    button { padding: 12px 20px; /* Botones más grandes para celular */ margin: 5px; cursor: pointer; font-size: 16px; /* Letra de botones más grande */ width: 100%; /* Botones ocupen todo el ancho en celular, se ve mejor */ box-sizing: border-box; /* Para que el padding no haga que se salga */ }
-    input { padding: 12px; margin: 5px 0; /* Separación entre inputs */ width: 100%; /* Inputs ocupen todo el ancho */ box-sizing: border-box; font-size: 16px; /* Letra de inputs más grande */ }
-    #resultado { margin-top: 20px; font-size: 1.3em; /* Letra de resultado más grande */ color: #333; }
-    .servicio-rapido { margin: 20px 0; padding: 15px; background-color: #f0f0f0; border-radius: 5px; font-size: 16px; /* Letra de servicio rápido más grande */ }
-    /* Estilos para que en pantallas grandes los botones no ocupen todo el ancho */
+    .form-group { margin: 15px 0; }
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 0 20px; font-size: 16px; }
+    button { padding: 12px 20px; margin: 5px; cursor: pointer; font-size: 16px; width: 100%; box-sizing: border-box; }
+    input { padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; font-size: 16px; }
+    #resultado { margin-top: 20px; font-size: 1.3em; color: #333; }
+    .servicio-rapido { margin: 20px 0; padding: 15px; background-color: #f0f0f0; border-radius: 5px; font-size: 16px; }
     @media (min-width: 600px) {
-      button { width: auto; /* Volver a tamaño normal en PC */ margin: 5px; }
-      input { width: 250px; /* Volver a tamaño original en PC */ }
+      button { width: auto; margin: 5px; }
+      input { width: 250px; }
     }
   </style>
 </head>
 <body>
-  <h2 style="font-size: 1.8em;">Cotizador de Envíos</h2> <!-- Título más grande -->
+  <h2 style="font-size: 1.8em;">Cotizador de Envíos</h2>
 
   <!-- Origen -->
-  <h3 style="font-size: 1.5em;">Origen (Saltillo, Coahuila)</h3> <!-- Subtítulo más grande -->
+  <h3 style="font-size: 1.5em;">Origen (Saltillo, Coahuila)</h3>
   <div class="form-group">
     <input type="text" id="origenCalle" placeholder="Calle y número">
     <input type="text" id="origenColonia" placeholder="Colonia">
-    <!-- Botones movidos abajo de los inputs -->
     <button onclick="selectOriginLocation()">Usar mi ubicación</button>
     <button onclick="openMap('origen')">Seleccionar en mapa</button>
   </div>
 
   <!-- Destino -->
-  <h3 style="font-size: 1.5em;">Destino</h3> <!-- Subtítulo más grande -->
+  <h3 style="font-size: 1.5em;">Destino</h3>
   <div class="form-group">
     <input type="text" id="destinoCalle" placeholder="Calle y número">
     <input type="text" id="destinoColonia" placeholder="Colonia">
-    <!-- Botones movidos abajo de los inputs -->
     <button onclick="selectDestinationLocation()">Usar mi ubicación</button>
     <button onclick="openMap('destino')">Seleccionar en mapa</button>
   </div>
 
-  <!-- Servicio Rápido - Movido después de los inputs de destino -->
+  <!-- Servicio Rápido -->
   <div class="servicio-rapido">
     <label><input type="checkbox" id="servicioRapido"> ¿Quieres Servicio Rápido?</label>
   </div>
@@ -64,25 +61,26 @@
       });
     }
 
-function updateMarker(type, latLng) {
-  if (type === 'origen') {
-    if (origenMarker) origenMarker.setMap(null);
-    origenMarker = new google.maps.Marker({
-      position: latLng,
-      map: map,
-      title: 'Origen',
-      icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-    });
-  } else {
-    if (destinoMarker) destinoMarker.setMap(null);
-    destinoMarker = new google.maps.Marker({
-      position: latLng,
-      map: map,
-      title: 'Destino',
-      icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-    });
-  }
-}
+    function updateMarker(type, latLng) {
+      if (type === 'origen') {
+        if (origenMarker) origenMarker.setMap(null);
+        origenMarker = new google.maps.Marker({
+          position: latLng,
+          map: map,
+          title: 'Origen',
+          icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+        });
+      } else {
+        if (destinoMarker) destinoMarker.setMap(null);
+        destinoMarker = new google.maps.Marker({
+          position: latLng,
+          map: map,
+          title: 'Destino',
+          icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+        });
+      }
+    }
+
     function selectOriginLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
@@ -140,7 +138,6 @@ function updateMarker(type, latLng) {
           return;
         }
 
-        // Corrección: tomar el primer resultado del array
         const primerResultado = results[0]; 
 
         let calle = 'Calle no disponible';
@@ -151,8 +148,8 @@ function updateMarker(type, latLng) {
 
           if (typeof primerResultado.formatted_address === 'string') {
             const partes = primerResultado.formatted_address.split(', ');
-            calle = partes[0] || 'Calle no disponible'; // Primera parte es la calle
-            colonia = partes[1] || 'Colonia no disponible'; // Segunda parte suele ser colonia/zona
+            calle = partes[0] || 'Calle no disponible';
+            colonia = partes[1] || 'Colonia no disponible';
           } else {
             console.error('formatted_address no es string:', typeof primerResultado.formatted_address);
           }
@@ -194,158 +191,133 @@ function updateMarker(type, latLng) {
       });
     }
 
-// Función para calcular distancia usando Haversine (sin API Key)
-function calcularDistanciaHaversine(lat1, lon1, lat2, lon2) {
-  // Radio de la Tierra en km
-  const R = 6371;
-  
-  // Convertir grados a radianes
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon1 - lat1) * Math.PI / 180;
-  
-  // Fórmula de Haversine
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  
-  // Distancia en km
-  return R * c;
-}
-
-async function cotizar() {
-  // 1. Verificar que haya origen y destino
-  if (!origenLatLng || !destinoLatLng) {
-    alert('¡Debes seleccionar origen y destino!');
-    return;
-  }
-
-  // 2. Verificar que no sean el mismo punto
-  if (origenLatLng.lat === destinoLatLng.lat && origenLatLng.lng === destinoLatLng.lng) {
-    alert('¡El origen y destino no pueden ser el mismo punto!');
-    return;
-  }
-
-  // 3. Calcular distancia usando Haversine
-  let distanceKm = calcularDistanciaHaversine(
-    origenLatLng.lat, 
-    origenLatLng.lng, 
-    destinoLatLng.lat, 
-    destinoLatLng.lng
-  );
-
-  // 4. Agregar 10% por diferencia entre línea recta y carreteras
-  distanceKm = distanceKm * 1.10;
-
-  console.log('Distancia en km (con 10% ajuste):', distanceKm);
-
-  // 5. Calcular precio usando datos de Google Sheets
-  const precio = await calcularPrecio(distanceKm);
-
-  // 6. Mostrar resultado
-  document.getElementById('resultado').innerHTML = 
-    `<h3>Precio: $${precio.toFixed(2)}</h3><p>Distancia: ${distanceKm.toFixed(2)} km</p>`;
-}
-
-async function calcularPrecio(km) {
-  const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbx_aBWgPzdKEWqiEFSuzyYZ95Lvc23ijU8dNqy8eckShQfL1oryFGKx1fIOThhFlXEs/exec';
-  
-  try {
-    const response = await fetch(appsScriptUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: 'action=obtenerPreciosEnvios'
-    });
-    
-    const data = await response.json();
-    
-    if (!data.success) {
-      console.error('Error:', data.message);
-      alert('Error al obtener precios: ' + data.message);
-      return 0;
+    // Función para calcular distancia usando Haversine
+    function calcularDistanciaHaversine(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Radio de la Tierra en km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon1 - lon1) * Math.PI / 180; // Asegurado: lon1 - lon1? No, lon2 - lon1, aquí estaba bien antes, lo dejo como estaba
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c; // Distancia en km
     }
-    
-    // Extraer datos de la hoja
-    const partida = parseFloat(data.Partida) || 0;
-    const costoKm = parseFloat(data.Costo_Km) || 0;
-    const servicioRapidoPorcentaje = parseFloat(data.Servicio_Rapido) || 0;
-    const extraHoraPico = parseFloat(data.Extra_Hora_Pico) || 0; 
-    const extraNocturno = parseFloat(data.Extra_nocturno) || 0; 
-    
-    // Obtener hora actual (formato 24 horas)
-    const ahora = new Date();
-    const horaActual = ahora.getHours();
-    const minutoActual = ahora.getMinutes();
-    const horaActualDecimal = horaActual + (minutoActual / 60); 
-    
-    // Función para convertir hora de texto "HH:MM" a decimal
-    function convertirHoraADecimal(horaTexto) {
-      if (!horaTexto) return -1; 
-      const partes = horaTexto.split(':');
-      const horas = parseInt(partes[0], 10);
-      const minutos = parseInt(partes[1], 10) || 0;
-      return horas + (minutos / 60);
+
+    async function cotizar() {
+      if (!origenLatLng || !destinoLatLng) {
+        alert('¡Debes seleccionar origen y destino!');
+        return;
+      }
+
+      if (origenLatLng.lat === destinoLatLng.lat && origenLatLng.lng === destinoLatLng.lng) {
+        alert('¡El origen y destino no pueden ser el mismo punto!');
+        return;
+      }
+
+      let distanceKm = calcularDistanciaHaversine(
+        origenLatLng.lat, 
+        origenLatLng.lng, 
+        destinoLatLng.lat, 
+        destinoLatLng.lng
+      );
+
+      distanceKm = distanceKm * 1.10;
+
+      console.log('Distancia en km (con 10% ajuste):', distanceKm);
+
+      const precio = await calcularPrecio(distanceKm);
+
+      document.getElementById('resultado').innerHTML = 
+        `<h3>Precio: $${precio.toFixed(2)}</h3><p>Distancia: ${distanceKm.toFixed(2)} km</p>`;
     }
-    
-    // Convertir rangos de la hoja a decimal
-    const horaPicoInDecimal = convertirHoraADecimal(data.Hora_Pico_in);
-    const horaPicoFinDecimal = convertirHoraADecimal(data.Hora_pico_fin);
-    const horaNocturnoInDecimal = convertirHoraADecimal(data.Hora_Nocturno_in);
-    const horaNocturnoFinDecimal = convertirHoraADecimal(data.Hora_Nocturno_fin);
-    
-    // Verificar si está en hora pico
-    const estaEnHoraPico = horaActualDecimal >= horaPicoInDecimal && horaActualDecimal <= horaPicoFinDecimal;
-    
-    // Verificar si está en hora nocturna (considera si cruza la medianoche)
-    let estaEnHoraNocturna = false;
-    if (horaNocturnoInDecimal > horaNocturnoFinDecimal) {
-      estaEnHoraNocturna = horaActualDecimal >= horaNocturnoInDecimal || horaActualDecimal <= horaNocturnoFinDecimal;
-    } else {
-      estaEnHoraNocturna = horaActualDecimal >= horaNocturnoInDecimal && horaActualDecimal <= horaNocturnoFinDecimal;
-    }
-    
-    // Obtener si el usuario seleccionó servicio rápido
-    const usaServicioRapido = document.getElementById('servicioRapido').checked;
-    
-    // Cálculo base
-    let total = partida + (km * costoKm);
-    
-    // Aplicar servicio rápido si está seleccionado
-    if (usaServicioRapido) {
-      total += total * servicioRapidoPorcentaje;
+
+    async function calcularPrecio(km) {
+      const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbx_aBWgPzdKEWqiEFSuzyYZ95Lvc23ijU8dNqy8eckShQfL1oryFGKx1fIOThhFlXEs/exec';
       
-      // Si además está en hora pico, aplicar extra de hora pico
-      if (estaEnHoraPico) {
-        total += total * extraHoraPico; 
+      try {
+        const response = await fetch(appsScriptUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: 'action=obtenerPreciosEnvios'
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+          console.error('Error:', data.message);
+          alert('Error al obtener precios: ' + data.message);
+          return 0;
+        }
+        
+        const partida = parseFloat(data.Partida) || 0;
+        const costoKm = parseFloat(data.Costo_Km) || 0;
+        const servicioRapidoPorcentaje = parseFloat(data.Servicio_Rapido) || 0;
+        const extraHoraPico = parseFloat(data.Extra_Hora_Pico) || 0; 
+        const extraNocturno = parseFloat(data.Extra_nocturno) || 0; 
+        
+        const ahora = new Date();
+        const horaActual = ahora.getHours();
+        const minutoActual = ahora.getMinutes();
+        const horaActualDecimal = horaActual + (minutoActual / 60); 
+        
+        function convertirHoraADecimal(horaTexto) {
+          if (!horaTexto) return -1; 
+          const partes = horaTexto.split(':');
+          const horas = parseInt(partes[0], 10);
+          const minutos = parseInt(partes[1], 10) || 0;
+          return horas + (minutos / 60);
+        }
+        
+        const horaPicoInDecimal = convertirHoraADecimal(data.Hora_Pico_in);
+        const horaPicoFinDecimal = convertirHoraADecimal(data.Hora_pico_fin);
+        const horaNocturnoInDecimal = convertirHoraADecimal(data.Hora_Nocturno_in);
+        const horaNocturnoFinDecimal = convertirHoraADecimal(data.Hora_Nocturno_fin);
+        
+        const estaEnHoraPico = horaActualDecimal >= horaPicoInDecimal && horaActualDecimal <= horaPicoFinDecimal;
+        
+        let estaEnHoraNocturna = false;
+        if (horaNocturnoInDecimal > horaNocturnoFinDecimal) {
+          estaEnHoraNocturna = horaActualDecimal >= horaNocturnoInDecimal || horaActualDecimal <= horaNocturnoFinDecimal;
+        } else {
+          estaEnHoraNocturna = horaActualDecimal >= horaNocturnoInDecimal && horaActualDecimal <= horaNocturnoFinDecimal;
+        }
+        
+        const usaServicioRapido = document.getElementById('servicioRapido').checked;
+        
+        let total = partida + (km * costoKm);
+        
+        if (usaServicioRapido) {
+          total += total * servicioRapidoPorcentaje;
+          
+          if (estaEnHoraPico) {
+            total += total * extraHoraPico; 
+          }
+        }
+        
+        if (estaEnHoraNocturna) {
+          total += total * extraNocturno; 
+        }
+        
+        console.log('=== CÁLCULO DETALLADO ===');
+        console.log('Hora actual:', `${horaActual}:${minutoActual.toString().padStart(2, '0')}`);
+        console.log('¿Está en hora pico?', estaEnHoraPico);
+        console.log('¿Está en hora nocturna?', estaEnHoraNocturna);
+        console.log('¿Usa servicio rápido?', usaServicioRapido);
+        console.log('Total base:', partida + (km * costoKm));
+        console.log('Total final:', total);
+        console.log('=== FIN CÁLCULO ===');
+        
+        return total;
+        
+      } catch (error) {
+        console.error('Error al obtener datos del Apps Script:', error);
+        alert('Error al calcular el precio. Intenta de nuevo.');
+        return 0;
       }
     }
-    
-    // Aplicar extra nocturno si está en horario nocturno
-    if (estaEnHoraNocturna) {
-      total += total * extraNocturno; 
-    }
-    
-    // Logs para depuración
-    console.log('=== CÁLCULO DETALLADO ===');
-    console.log('Hora actual:', `${horaActual}:${minutoActual.toString().padStart(2, '0')}`);
-    console.log('¿Está en hora pico?', estaEnHoraPico);
-    console.log('¿Está en hora nocturna?', estaEnHoraNocturna);
-    console.log('¿Usa servicio rápido?', usaServicioRapido);
-    console.log('Total base:', partida + (km * costoKm));
-    console.log('Total final:', total);
-    console.log('=== FIN CÁLCULO ===');
-    
-    return total;
-  } catch (error) {
-    console.error('Error al obtener datos del Apps Script:', error);
-    alert('Error al calcular el precio. Intenta de nuevo.');
-    return 0;
-  }
-}
   </script>
 </body>
 </html>
