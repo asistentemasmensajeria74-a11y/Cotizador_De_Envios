@@ -21,23 +21,29 @@
 <body>
   <h2 style="font-size: 1.8em;">Cotizador de Envíos</h2>
 
-  <!-- Origen -->
-  <!--<h3 style="font-size: 1.5em;">Origen (Saltillo, Coahuila)</h3> -->
-  <div class="form-group">
-    <input type="text" id="origenCalle" placeholder="Calle y número">
-    <input type="text" id="origenColonia" placeholder="Colonia">
+<!-- Origen -->
+<h3 style="font-size: 1.5em;">Origen (Saltillo, Coahuila)</h3>
+<div class="form-group">
+  <input type="text" id="origenCalle" placeholder="Calle y número">
+  <input type="text" id="origenColonia" placeholder="Colonia">
+  <!-- Contenedor de botones -->
+  <div class="button-group">
     <button onclick="selectOriginLocation()">Usar mi ubicación</button>
     <button onclick="openMap('origen')">Seleccionar en mapa</button>
   </div>
+</div>
 
-  <!-- Destino -->
-  <h3 style="font-size: 1.5em;">Destino</h3>
-  <div class="form-group">
-    <input type="text" id="destinoCalle" placeholder="Calle y número">
-    <input type="text" id="destinoColonia" placeholder="Colonia">
+<!-- Destino -->
+<h3 style="font-size: 1.5em;">Destino</h3>
+<div class="form-group">
+  <input type="text" id="destinoCalle" placeholder="Calle y número">
+  <input type="text" id="destinoColonia" placeholder="Colonia">
+  <!-- Contenedor de botones -->
+  <div class="button-group">
     <button onclick="selectDestinationLocation()">Usar mi ubicación</button>
     <button onclick="openMap('destino')">Seleccionar en mapa</button>
   </div>
+</div>
 
   <!-- Servicio Rápido -->
 <div class="servicio-rapido">
