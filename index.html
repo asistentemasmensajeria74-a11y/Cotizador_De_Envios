@@ -5,38 +5,90 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPEU32sU9W6r-if_fvGDAMG3Y2Ks8M2X4&callback=initMap" async defer></script>
    <style>
-     #map { height: 300px; margin: 10px 0; }
-     .form-group { margin: 15px 0; }
-     body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 0 20px; font-size: 16px; }
-     button { padding: 12px 20px; margin: 5px; cursor: pointer; font-size: 16px; width: 100%; box-sizing: border-box; }
-     input { padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; font-size: 16px; }
-     #resultado { margin-top: 20px; font-size: 1.3em; color: #333; }
-     .servicio-rapido { margin: 20px 0; padding: 15px; background-color: #f0f0f0; border-radius: 5px; font-size: 16px; }
+     /* Mapa: altura base y ajuste para celular */
+     #map { 
+       height: 200px; /* Altura base más pequeña */
+       margin: 10px 0; 
+     }
      
-     /* Nuevos estilos para botones en un solo renglón */
+     .form-group { margin: 15px 0; }
+     
+     body { 
+       font-family: Arial, sans-serif; 
+       max-width: 800px; 
+       margin: 20px auto; 
+       padding: 0 20px; 
+       font-size: 16px; 
+     }
+     
+     /* Botones generales */
+     button { 
+       padding: 12px 20px; 
+       margin: 5px; 
+       cursor: pointer; 
+       font-size: 16px; 
+       width: 100%; 
+       box-sizing: border-box; 
+     }
+     
+     input { 
+       padding: 12px; 
+       margin: 5px 0; 
+       width: 100%; 
+       box-sizing: border-box; 
+       font-size: 16px; 
+     }
+     
+     #resultado { 
+       margin-top: 20px; 
+       font-size: 1.3em; 
+       color: #333; 
+     }
+     
+     .servicio-rapido { 
+       margin: 20px 0; 
+       padding: 15px; 
+       background-color: #f0f0f0; 
+       border-radius: 5px; 
+       font-size: 16px; 
+     }
+     
+     /* Contenedor de botones: alinea en un solo renglón */
      .button-group {
        display: flex;
-       gap: 10px;
+       gap: 8px; /* Menos espacio entre botones */
        margin-top: 5px;
+       flex-wrap: nowrap; /* Evita que se rompan en varias líneas */
      }
+     
+     /* Botones dentro del contenedor: tamaño base */
      .button-group button {
-       padding: 8px 16px;
-       width: auto;
-       font-size: 14px;
+       padding: 6px 12px; /* Menos padding */
+       width: auto; /* Ancho automático según contenido */
+       font-size: 13px; /* Tamaño de letra más pequeño */
+       white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
      }
+     /* Ajustes para pantallas grandes (PC) */
      @media (min-width: 600px) {
        button { width: auto; margin: 5px; }
        input { width: 250px; }
        .button-group {
          justify-content: flex-start;
        }
-     }
-     @media (max-width: 400px) {
-       .button-group {
-         flex-direction: column;
+       /* Mapa más grande en PC */
+       #map {
+         height: 300px;
        }
+     }
+     /* Ajustes específicos para pantallas muy pequeñas (celulares) */
+     @media (max-width: 400px) {
        .button-group button {
-         width: 100%;
+         padding: 5px 10px; /* Aún menos padding */
+         font-size: 12px; /* Tamaño de letra aún más pequeño */
+       }
+       /* Mapa aún más compacto en celulares muy pequeños */
+       #map {
+         height: 180px;
        }
      }
    </style>
@@ -44,7 +96,7 @@
  <body>
    <h2 style="font-size: 1.8em;">Cotizador de Envíos</h2>
    <!-- Origen -->
-   <h3 style="font-size: 1.5em;">Origen (Saltillo, Coah.)</h3>
+   <h3 style="font-size: 1.5em;">Origen (Saltillo, Coahuila)</h3>
    <div class="form-group">
      <input type="text" id="origenCalle" placeholder="Calle y número">
      <input type="text" id="origenColonia" placeholder="Colonia">
