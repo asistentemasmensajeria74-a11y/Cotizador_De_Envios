@@ -349,10 +349,10 @@ async function cotizar() {
     destinoLatLng.lng
   );
 
-  // 4. Agregar 10% por diferencia entre línea recta y carreteras
-  distanceKm = distanceKm * 1;
+  // 4. Agregar 17% por diferencia entre línea recta y carreteras
+  distanceKm = distanceKm * 1.7;
 
-  console.log('Distancia en km (con 18% ajuste):', distanceKm);
+  console.log('Distancia en km (con 17% ajuste):', distanceKm);
 
   // 5. Calcular precio usando datos de Google Sheets
   const precio = await calcularPrecio(distanceKm);
