@@ -55,15 +55,6 @@
        line-height: 1.2; /* Menos espacio entre líneas en el resultado */
      }
      
-     .servicio-rapido { 
-       margin: 15px 0; /* Menos margen alrededor del servicio rápido */
-       padding: 10px; /* Menos padding interno */
-       background-color: #f0f0f0; 
-       border-radius: 5px; 
-       font-size: 14px; /* Tamaño de letra más pequeño */
-       line-height: 1.2; /* Menos espacio entre líneas */
-     }
-     
      /* Contenedor de botones: alinea en un solo renglón */
      .button-group {
        display: flex;
@@ -80,6 +71,23 @@
        white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
        line-height: 1.2; /* Menos espacio entre líneas en el botón */
      }
+     /* === ESTILOS EXCLUSIVOS PARA BOTÓN COTIZAR === */
+     #btnCotizar {
+       padding: 6px 12px; /* Menos padding para hacerlo más pequeño */
+       font-size: 13px; /* Tamaño de letra más pequeño */
+       width: auto; /* Ancho automático según el texto */
+       margin: 5px 0; /* Menos margen alrededor */
+       line-height: 1.2; /* Menos espacio entre líneas */
+     }
+     /* === ESTILOS EXCLUSIVOS PARA SERVICIO RÁPIDO === */
+     .servicio-rapido { 
+       margin: 10px 0; /* Menos espacio externo arriba y abajo */
+       padding: 8px; /* Menos espacio interno */
+       background-color: #f0f0f0; 
+       border-radius: 5px; 
+       font-size: 13px; /* Tamaño de letra más pequeño */
+       line-height: 1.2; /* Menos espacio entre líneas del texto */
+     }
      /* Ajustes para pantallas grandes (PC) */
      @media (min-width: 600px) {
        button { width: auto; margin: 5px; }
@@ -90,6 +98,15 @@
        /* Mapa más grande en PC */
        #map {
          height: 300px;
+       }
+       /* Ajustes adicionales para PC */
+       #btnCotizar {
+         padding: 8px 15px;
+         font-size: 14px;
+       }
+       .servicio-rapido {
+         padding: 10px;
+         font-size: 14px;
        }
      }
      /* Ajustes específicos para pantallas muy pequeñas (celulares) */
@@ -107,10 +124,14 @@
          padding: 6px 8px;
          font-size: 13px;
        }
-       /* Servicio rápido más pequeño en celulares muy pequeños */
+       /* Ajustes adicionales para celulares */
+       #btnCotizar {
+         padding: 5px 10px;
+         font-size: 12px;
+       }
        .servicio-rapido {
-         padding: 8px;
-         font-size: 13px;
+         padding: 6px;
+         font-size: 12px;
        }
      }
    </style>
@@ -139,12 +160,10 @@
    </div>
    <!-- Servicio Rápido -->
    <div class="servicio-rapido">
-     <label>
-      ¿Quieres Servicio Rápido?<input type="checkbox" id="servicioRapido"> 
-     </label>
+     <label><input type="checkbox" id="servicioRapido"> ¿Quieres Servicio Rápido?</label>
    </div>
-   <!-- Botón cotizar -->
-   <button onclick="cotizar()">COTIZAR</button>
+   <!-- Botón cotizar con ID exclusivo -->
+   <button id="btnCotizar" onclick="cotizar()">COTIZAR</button>
    <div id="resultado"></div>
    <div id="map"></div>
    <script>
