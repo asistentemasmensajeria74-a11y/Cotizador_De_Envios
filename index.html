@@ -1,67 +1,77 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Cotizador de Envíos</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPEU32sU9W6r-if_fvGDAMG3Y2Ks8M2X4&callback=initMap" async defer></script>
-  <style>
-    #map { height: 300px; margin: 10px 0; }
-    .form-group { margin: 15px 0; }
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 0 20px; font-size: 16px; }
-    button { padding: 12px 20px; margin: 5px; cursor: pointer; font-size: 16px; width: 100%; box-sizing: border-box; }
-    input { padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; font-size: 16px; }
-    #resultado { margin-top: 20px; font-size: 1.3em; color: #333; }
-    .servicio-rapido { margin: 20px 0; padding: 15px; background-color: #f0f0f0; border-radius: 5px; font-size: 16px; }
-    @media (min-width: 600px) {
-      button { width: auto; margin: 5px; }
-      input { width: 250px; }
-    }
-  </style>
-</head>
-<body>
-  <h2 style="font-size: 1.8em;">Cotizador de Envíos</h2>
-
-<!-- Origen -->
-<h3 style="font-size: 1.5em;">Origen (Saltillo, Coahuila)</h3>
-<div class="form-group">
-  <input type="text" id="origenCalle" placeholder="Calle y número">
-  <input type="text" id="origenColonia" placeholder="Colonia">
-  <!-- Contenedor de botones -->
-  <div class="button-group">
-    <button onclick="selectOriginLocation()">Usar mi ubicación</button>
-    <button onclick="openMap('origen')">Seleccionar en mapa</button>
-  </div>
-</div>
-
-<!-- Destino -->
-<h3 style="font-size: 1.5em;">Destino</h3>
-<div class="form-group">
-  <input type="text" id="destinoCalle" placeholder="Calle y número">
-  <input type="text" id="destinoColonia" placeholder="Colonia">
-  <!-- Contenedor de botones -->
-  <div class="button-group">
-    <button onclick="selectDestinationLocation()">Usar mi ubicación</button>
-    <button onclick="openMap('destino')">Seleccionar en mapa</button>
-  </div>
-</div>
-
-  <!-- Servicio Rápido -->
-<div class="servicio-rapido">
-  <label>
-    ¿Quieres Servicio Rápido? <input type="checkbox" id="servicioRapido">
-  </label>
-</div>
-
-<!-- Botones en el mismo renglón -->
-<div style="display: flex; gap: 10px; margin-top: 10px;">
-  <button onclick="cotizar()">COTIZAR</button>
-</div>
-
-<div id="resultado"></div>
-
-  <div id="map"></div>
-
-  <script>
+ <html>
+ <head>
+   <title>Cotizador de Envíos</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPEU32sU9W6r-if_fvGDAMG3Y2Ks8M2X4&callback=initMap" async defer></script>
+   <style>
+     #map { height: 300px; margin: 10px 0; }
+     .form-group { margin: 15px 0; }
+     body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 0 20px; font-size: 16px; }
+     button { padding: 12px 20px; margin: 5px; cursor: pointer; font-size: 16px; width: 100%; box-sizing: border-box; }
+     input { padding: 12px; margin: 5px 0; width: 100%; box-sizing: border-box; font-size: 16px; }
+     #resultado { margin-top: 20px; font-size: 1.3em; color: #333; }
+     .servicio-rapido { margin: 20px 0; padding: 15px; background-color: #f0f0f0; border-radius: 5px; font-size: 16px; }
+     
+     /* Nuevos estilos para botones en un solo renglón */
+     .button-group {
+       display: flex;
+       gap: 10px;
+       margin-top: 5px;
+     }
+     .button-group button {
+       padding: 8px 16px;
+       width: auto;
+       font-size: 14px;
+     }
+     @media (min-width: 600px) {
+       button { width: auto; margin: 5px; }
+       input { width: 250px; }
+       .button-group {
+         justify-content: flex-start;
+       }
+     }
+     @media (max-width: 400px) {
+       .button-group {
+         flex-direction: column;
+       }
+       .button-group button {
+         width: 100%;
+       }
+     }
+   </style>
+ </head>
+ <body>
+   <h2 style="font-size: 1.8em;">Cotizador de Envíos</h2>
+   <!-- Origen -->
+   <h3 style="font-size: 1.5em;">Origen (Saltillo, Coahuila)</h3>
+   <div class="form-group">
+     <input type="text" id="origenCalle" placeholder="Calle y número">
+     <input type="text" id="origenColonia" placeholder="Colonia">
+     <div class="button-group">
+       <button onclick="selectOriginLocation()">Usar mi ubicación</button>
+       <button onclick="openMap('origen')">Seleccionar en mapa</button>
+     </div>
+   </div>
+   <!-- Destino -->
+   <h3 style="font-size: 1.5em;">Destino</h3>
+   <div class="form-group">
+     <input type="text" id="destinoCalle" placeholder="Calle y número">
+     <input type="text" id="destinoColonia" placeholder="Colonia">
+     <div class="button-group">
+       <button onclick="selectDestinationLocation()">Usar mi ubicación</button>
+       <button onclick="openMap('destino')">Seleccionar en mapa</button>
+     </div>
+   </div>
+   <!-- Servicio Rápido -->
+   <div class="servicio-rapido">
+     <label><input type="checkbox" id="servicioRapido"> ¿Quieres Servicio Rápido?</label>
+   </div>
+   <!-- Botón cotizar -->
+   <button onclick="cotizar()">COTIZAR</button>
+   <div id="resultado"></div>
+   <div id="map"></div>
+   <script>
     let map, origenMarker, destinoMarker;
     let origenLatLng = null, destinoLatLng = null;
 
