@@ -2,40 +2,47 @@
 <html>
 <head>
   <title>Cotizador de Envíos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Esto ayuda a que se vea bien en celular -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPEU32sU9W6r-if_fvGDAMG3Y2Ks8M2X4&callback=initMap" async defer></script>
   <style>
     #map { height: 300px; margin: 10px 0; }
-    .form-group { margin: 10px 0; }
-    /* Un poquito de estilo para que no se vea tan sencillote, por cierto */
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 0 20px; }
-    button { padding: 8px 15px; margin: 5px; cursor: pointer; }
-    input { padding: 8px; margin: 5px; width: 250px; }
-    #resultado { margin-top: 20px; font-size: 1.2em; color: #333; }
-    .servicio-rapido { margin: 15px 0; padding: 10px; background-color: #f0f0f0; border-radius: 5px; display: inline-block; }
+    .form-group { margin: 15px 0; } /* Aumenté un poco el margen para que no se vea tan apretado */
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 0 20px; font-size: 16px; /* Tamaño base de letra más grande */ }
+    button { padding: 12px 20px; /* Botones más grandes para celular */ margin: 5px; cursor: pointer; font-size: 16px; /* Letra de botones más grande */ width: 100%; /* Botones ocupen todo el ancho en celular, se ve mejor */ box-sizing: border-box; /* Para que el padding no haga que se salga */ }
+    input { padding: 12px; margin: 5px 0; /* Separación entre inputs */ width: 100%; /* Inputs ocupen todo el ancho */ box-sizing: border-box; font-size: 16px; /* Letra de inputs más grande */ }
+    #resultado { margin-top: 20px; font-size: 1.3em; /* Letra de resultado más grande */ color: #333; }
+    .servicio-rapido { margin: 20px 0; padding: 15px; background-color: #f0f0f0; border-radius: 5px; font-size: 16px; /* Letra de servicio rápido más grande */ }
+    /* Estilos para que en pantallas grandes los botones no ocupen todo el ancho */
+    @media (min-width: 600px) {
+      button { width: auto; /* Volver a tamaño normal en PC */ margin: 5px; }
+      input { width: 250px; /* Volver a tamaño original en PC */ }
+    }
   </style>
 </head>
 <body>
-  <h2>Cotizador de Envíos</h2>
+  <h2 style="font-size: 1.8em;">Cotizador de Envíos</h2> <!-- Título más grande -->
 
   <!-- Origen -->
-  <h3>Origen (Saltillo, Coahuila)</h3>
+  <h3 style="font-size: 1.5em;">Origen (Saltillo, Coahuila)</h3> <!-- Subtítulo más grande -->
   <div class="form-group">
     <input type="text" id="origenCalle" placeholder="Calle y número">
     <input type="text" id="origenColonia" placeholder="Colonia">
+    <!-- Botones movidos abajo de los inputs -->
     <button onclick="selectOriginLocation()">Usar mi ubicación</button>
     <button onclick="openMap('origen')">Seleccionar en mapa</button>
   </div>
 
   <!-- Destino -->
-  <h3>Destino</h3>
+  <h3 style="font-size: 1.5em;">Destino</h3> <!-- Subtítulo más grande -->
   <div class="form-group">
     <input type="text" id="destinoCalle" placeholder="Calle y número">
     <input type="text" id="destinoColonia" placeholder="Colonia">
+    <!-- Botones movidos abajo de los inputs -->
     <button onclick="selectDestinationLocation()">Usar mi ubicación</button>
     <button onclick="openMap('destino')">Seleccionar en mapa</button>
   </div>
 
-  <!-- Servicio Rápido -->
+  <!-- Servicio Rápido - Movido después de los inputs de destino -->
   <div class="servicio-rapido">
     <label><input type="checkbox" id="servicioRapido"> ¿Quieres Servicio Rápido?</label>
   </div>
@@ -194,7 +201,7 @@ function calcularDistanciaHaversine(lat1, lon1, lat2, lon2) {
   
   // Convertir grados a radianes
   const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const dLon = (lon1 - lat1) * Math.PI / 180;
   
   // Fórmula de Haversine
   const a = 
@@ -333,7 +340,6 @@ async function calcularPrecio(km) {
     console.log('=== FIN CÁLCULO ===');
     
     return total;
-    
   } catch (error) {
     console.error('Error al obtener datos del Apps Script:', error);
     alert('Error al calcular el precio. Intenta de nuevo.');
@@ -343,3 +349,12 @@ async function calcularPrecio(km) {
   </script>
 </body>
 </html>
+
+
+
+
+
+
+    
+    
+  } catch (
