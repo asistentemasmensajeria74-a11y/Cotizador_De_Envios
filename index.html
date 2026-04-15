@@ -22,7 +22,7 @@
   <h2 style="font-size: 1.8em;">Cotizador de Envíos</h2>
 
   <!-- Origen -->
-  <h3 style="font-size: 1.5em;">Origen (Saltillo, Coahuila)</h3>
+  <!--<h3 style="font-size: 1.5em;">Origen (Saltillo, Coahuila)</h3> -->
   <div class="form-group">
     <input type="text" id="origenCalle" placeholder="Calle y número">
     <input type="text" id="origenColonia" placeholder="Colonia">
@@ -40,13 +40,18 @@
   </div>
 
   <!-- Servicio Rápido -->
-  <div class="servicio-rapido">
-    <label><input type="checkbox" id="servicioRapido"> ¿Quieres Servicio Rápido?</label>
-  </div>
+<div class="servicio-rapido">
+  <label>
+    ¿Quieres Servicio Rápido? <input type="checkbox" id="servicioRapido">
+  </label>
+</div>
 
-  <!-- Botón cotizar -->
+<!-- Botones en el mismo renglón -->
+<div style="display: flex; gap: 10px; margin-top: 10px;">
   <button onclick="cotizar()">COTIZAR</button>
-  <div id="resultado"></div>
+</div>
+
+<div id="resultado"></div>
 
   <div id="map"></div>
 
